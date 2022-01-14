@@ -1,6 +1,8 @@
 package com.lyh.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 
 import javax.persistence.Id;
@@ -10,7 +12,7 @@ import javax.persistence.Id;
  * @author lyh
  */
 @Data
-public class ServiceType implements Serializable {
+public class TypeOfService implements Serializable {
     /**
      * 主键id
      */
@@ -31,6 +33,11 @@ public class ServiceType implements Serializable {
      * 软删除（0为未删除，1为已删除）
      */
     private Integer isDel;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 
     private static final long serialVersionUID = 1L;
 }

@@ -4,10 +4,10 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyh.entity.Admin;
-import com.lyh.entity.User;
 import com.lyh.service.AdminService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -33,11 +33,11 @@ public class AdminController {
      * @Date 2021/12/17
      **/
     @PostMapping("addAdmin")
-    public Result<Admin> addAdmin(@RequestBody Admin admin){
+    public Result<Boolean> addAdmin(@RequestBody Admin admin){
         if(adminService.addAdmin(admin)==1){
-            return ResultUtil.ok(admin);
+            return ResultUtil.ok(true);
         }
-        return ResultUtil.ok();
+        return ResultUtil.fail("注册失败");
     }
 
     /**
@@ -48,9 +48,12 @@ public class AdminController {
      * @Date 2021/12/17
      **/
     @GetMapping("findAdminList")
-    public Result<PageInfo<Admin>> findUserList(@RequestParam(defaultValue = "0") int pageIndex, @RequestParam(defaultValue = "10") int pageSize){
+    public Result<PageInfo<Admin>> findUserList(String searchStr, @RequestParam(defaultValue = "0") int pageIndex, @RequestParam(defaultValue = "10") int pageSize){
+        if(StringUtils.isBlank(searchStr)){
+            searchStr = null;
+        }
         Page<Admin> page = PageHelper.startPage(pageIndex,pageSize);
-        List<Admin> adminList = adminService.findAdminList();
+        List<Admin> adminList = adminService.findAdminList(searchStr);
         PageInfo<Admin> pageInfo = page.toPageInfo();
         pageInfo.setList(adminList);
         return ResultUtil.ok(pageInfo);
@@ -65,7 +68,7 @@ public class AdminController {
      **/
     @GetMapping("findAdminById")
     public Result<Admin> findAdminById(Long id){
-        Admin admin = adminService.findUserById(id);
+        Admin admin = adminService.findAdminById(id);
         return ResultUtil.ok(admin);
     }
 

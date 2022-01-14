@@ -1,17 +1,8 @@
 package com.lyh.dao;
 
-import com.lyh.entity.ServiceType;
+import com.lyh.BaseMapper;
+import com.lyh.entity.TypeOfService;
 
-public interface ServiceTypeMapper {
-    int deleteByPrimaryKey(Long id);
+public interface ServiceTypeMapper extends BaseMapper<TypeOfService> {
 
-    int insert(ServiceType record);
-
-    int insertSelective(ServiceType record);
-
-    ServiceType selectByPrimaryKey(Long id);
-
-    int updateByPrimaryKeySelective(ServiceType record);
-
-    int updateByPrimaryKey(ServiceType record);
 }

@@ -12,7 +12,7 @@ import java.util.List;
 public interface AdminService {
     int addAdmin(Admin admin);
 
-    List<Admin> findAdminList();
+    List<Admin> findAdminList(String searchStr);
 
-    Admin findUserById(Long id);
+    Admin findAdminById(Long id);
 }

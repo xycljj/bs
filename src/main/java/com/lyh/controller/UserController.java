@@ -10,6 +10,7 @@ import com.lyh.service.UserService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
 import com.lyh.utils.TokenUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 @RestController
 @CrossOrigin
+@Slf4j
 @RequestMapping("user")
 public class UserController {
 
@@ -36,7 +38,7 @@ public class UserController {
      * @Param
      * @Date 2021/12/24
      **/
-    @PostMapping("login")
+    @PostMapping("admin")
     public Result<UserVo> login(@RequestBody User user) {
         User user1 = userService.login(user);
         if (user1 != null) {

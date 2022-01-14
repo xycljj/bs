@@ -1,6 +1,8 @@
 package com.lyh.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 
 import javax.persistence.Id;
@@ -18,7 +20,7 @@ public class Admin implements Serializable {
     private Long id;
 
     /**
-     * 名称
+     * 管理员用户名
      */
     private String adminName;
 
@@ -26,6 +28,26 @@ public class Admin implements Serializable {
      * 密码
      */
     private String adminPassword;
+
+    /**
+     * 真实姓名
+     */
+    private String name;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 头像
+     */
+    private String headPortrait;
+
+    /**
+     * 身份证号码
+     */
+    private String idCard;
 
     /**
      * 软删除（0为未删除，1为已删除）

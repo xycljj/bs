@@ -8,7 +8,8 @@
     <result column="is_del" jdbcType="INTEGER" property="isDel" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, admin_name, admin_password, is_del
+    id, admin_name as adminName, admin_password as adminPassword, is_del as isDel, create_time as createTime,
+    head_portrait as headPortrait, name, id_card as idCard
   </sql>
 
   <select id="findAdminList" resultType="com.lyh.entity.Admin">
@@ -18,5 +19,8 @@
         `admin`
     where
         is_del = 0
+        <if test="searchStr != null">
+          and (admin_name like concat("%",#{searchStr},"%") or name like("%",#{searchStr},"%"))
+        </if>
   </select>
 </mapper>

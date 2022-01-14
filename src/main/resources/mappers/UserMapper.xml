@@ -11,9 +11,10 @@
     <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
     <result column="user_type" jdbcType="INTEGER" property="userType" />
     <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="id_card" jdbcType="VARCHAR" property="idCard" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, username, `password`, email, `name`, address, phone_number, user_type, is_del
+    id, username, `password`, email, `name`, address, phone_number, user_type, is_del, id_card
   </sql>
 
   <select id="findUserList" resultType="com.lyh.entity.User">

@@ -57,5 +57,10 @@ public class User implements Serializable {
      */
     private Integer isDel;
 
+    /**
+     * 身份证号码s
+     */
+    private String idCard;
+
     private static final long serialVersionUID = 1L;
 }
