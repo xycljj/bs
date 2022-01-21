@@ -67,12 +67,12 @@ public class TokenUtils {
     
     /**
      * @Author lyh
-     * @Description //TODO 获取token中的userId信息
+     * @Description //TODO 获取token中的登录者信息
      * @Param 
      * @return 
      * @Date 2021/12/29
      **/
-    public static Long getUserId(String token){
+    public static Long getIdFromToken(String token){
         try{
             DecodedJWT jwt = JWT.decode(token);
             return jwt.getClaim("userId").asLong();

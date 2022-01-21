@@ -15,4 +15,6 @@ public interface AdminService {
     List<Admin> findAdminList(String searchStr);
 
     Admin findAdminById(Long id);
+
+    Admin login(Admin admin);
 }

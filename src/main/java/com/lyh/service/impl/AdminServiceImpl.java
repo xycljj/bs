@@ -5,6 +5,7 @@ import com.lyh.entity.Admin;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.AdminService;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -22,6 +23,15 @@ public class AdminServiceImpl implements AdminService {
     private AdminMapper adminMapper;
 
     @Override
+    public Admin login(Admin admin) {
+        Example example = new Example(Admin.class);
+        example.createCriteria().andEqualTo("adminName",admin.getAdminName())
+                .andEqualTo("adminPassword",admin.getAdminPassword())
+                .andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue());
+        return adminMapper.selectOneByExample(example);
+    }
+
+    @Override
     public int addAdmin(Admin admin) {
         admin.setCreateTime(new Date());
         admin.setIsDel(DelEnum.IS_NOT_DEL.getValue());
@@ -37,4 +47,6 @@ public class AdminServiceImpl implements AdminService {
     public Admin findAdminById(Long id) {
         return adminMapper.selectByPrimaryKey(id);
     }
+
+
 }

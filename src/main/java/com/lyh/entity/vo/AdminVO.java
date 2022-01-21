@@ -1,21 +1,19 @@
 package com.lyh.entity.vo;
 
-import com.lyh.entity.User;
+import com.lyh.entity.Admin;
 import lombok.Data;
 
 /**
  * @author lyh
- * @ClassName UserVo
- * @createTime 2021/12/28 09:39:00
+ * @ClassName AdminVO
+ * @createTime 2022/01/19 17:22:00
  */
 @Data
-public class UserVo{
+public class AdminVO {
 
-    private User user;
+    private Admin admin;
 
     private String token;
-
-    private String userType;
 
     /**
      * 判断token是否失效

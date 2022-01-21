@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
         example.createCriteria().andEqualTo("username",user.getUsername())
                 .andEqualTo("password",user.getPassword())
                 .andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue())
-                .andEqualTo("userType",2);
+                .andEqualTo("userType",0);
         User user1 = userMapper.selectOneByExample(example);
         if(user1 == null){
             return null;

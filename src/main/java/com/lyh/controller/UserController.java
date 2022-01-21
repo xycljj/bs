@@ -38,7 +38,7 @@ public class UserController {
      * @Param
      * @Date 2021/12/24
      **/
-    @PostMapping("admin")
+    @PostMapping("login")
     public Result<UserVo> login(@RequestBody User user) {
         User user1 = userService.login(user);
         if (user1 != null) {
@@ -162,7 +162,7 @@ public class UserController {
         if (!userVo.getIsTrue()) {
             return ResultUtil.fail("离开页面太久，登录已失效....");
         }
-        Long uid = TokenUtils.getUserId(token);
+        Long uid = TokenUtils.getIdFromToken(token);
         User user = userService.findUserById(uid);
         userVo.setUser(user);
         return ResultUtil.ok(userVo);

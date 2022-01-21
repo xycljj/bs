@@ -50,6 +50,11 @@ public class Admin implements Serializable {
     private String idCard;
 
     /**
+     * 手机号
+     */
+    private String phone;
+
+    /**
      * 软删除（0为未删除，1为已删除）
      */
     private Integer isDel;
