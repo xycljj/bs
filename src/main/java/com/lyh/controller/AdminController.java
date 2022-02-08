@@ -13,9 +13,11 @@ import com.lyh.utils.ResultUtil;
 import com.lyh.utils.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.UsesSunMisc;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +44,7 @@ public class AdminController {
      * @Date 2022/1/19
      **/
     @PostMapping("login")
-    public Result<AdminVO> adminLogin(@RequestBody Admin admin) {
+    public Result<AdminVO> adminLogin(@RequestBody Admin admin, HttpSession session) {
         Admin admin1 = adminService.login(admin);
         if (admin1 != null) {
             AdminVO adminVO = new AdminVO();
@@ -50,6 +52,7 @@ public class AdminController {
             adminVO.setAdmin(admin1);
             adminVO.setToken(token);
             log.info("------------管理员登录-------------");
+            session.setAttribute("admin",admin);
             return ResultUtil.ok(adminVO);
         }
         return ResultUtil.fail("用户名密码错误");
@@ -130,8 +133,9 @@ public class AdminController {
      * @Date 2021/12/29
      **/
     @PostMapping("logout")
-    public Result<String> logout() {
+    public Result<String> logout(HttpSession session) {
         System.out.println("退出登录");
+        session.removeAttribute("admin");
         return ResultUtil.ok("退出登录");
     }
 

@@ -23,4 +23,15 @@
           and (admin_name like concat("%",#{searchStr},"%") or name like("%",#{searchStr},"%"))
         </if>
   </select>
+
+    <select id="findAdminById" resultType="com.lyh.entity.Admin">
+        select
+        id, admin_name as adminName, admin_password as adminPassword, is_del as isDel, create_time as createTime,
+        head_portrait as headPortrait, name, id_card as idCard
+        from
+        `admin`
+        where
+        is_del = 0
+        and id = #{adminId}
+    </select>
 </mapper>

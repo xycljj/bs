@@ -1,6 +1,7 @@
 package com.lyh.service;
 
 import com.github.pagehelper.PageInfo;
+import com.lyh.entity.Admin;
 import com.lyh.entity.User;
 
 import java.util.List;
@@ -17,13 +18,13 @@ public interface UserService {
 
     int addUser(User user);
 
-    List<User> findUserList(String username, String phone, Integer userType);
+    List<User> findUserList(String username, String phone);
 
     User findUserByUsername(String username);
 
     int delUser(Long id);
 
-    User editUser(User user);
+    User editUser(User user,Admin admin);
 
     User login(User user);
 }

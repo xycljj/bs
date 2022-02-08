@@ -10,4 +10,5 @@ public interface AdminMapper extends BaseMapper<Admin> {
 
     List<Admin> findAdminList(@Param("searchStr") String searchStr);
 
+    Admin findAdminById(@Param("adminId") Long adminId);
 }

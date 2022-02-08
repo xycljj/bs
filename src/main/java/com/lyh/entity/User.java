@@ -1,6 +1,8 @@
 package com.lyh.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 
 import javax.persistence.Id;
@@ -45,12 +47,7 @@ public class User implements Serializable {
     /**
      * 手机号
      */
-    private String phoneNumber;
-
-    /**
-     * 用户类型（0为普通用户，1为心理咨询师，2为管理员）
-     */
-    private Integer userType;
+    private String phone;
 
     /**
      * 软删除（0为未删除，1为已删除）
@@ -58,9 +55,14 @@ public class User implements Serializable {
     private Integer isDel;
 
     /**
-     * 身份证号码s
+     * 身份证号码
      */
     private String idCard;
+
+    /**
+     * 创建时间/注册时间
+     */
+    private Date createTime;
 
     private static final long serialVersionUID = 1L;
 }

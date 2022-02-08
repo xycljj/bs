@@ -8,13 +8,14 @@
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="address" jdbcType="VARCHAR" property="address" />
-    <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
-    <result column="user_type" jdbcType="INTEGER" property="userType" />
+    <result column="phone_number" jdbcType="VARCHAR" property="phone" />
     <result column="is_del" jdbcType="INTEGER" property="isDel" />
     <result column="id_card" jdbcType="VARCHAR" property="idCard" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, username, `password`, email, `name`, address, phone_number, user_type, is_del, id_card
+    id, username, password, email, `name` ,
+    address, phone, is_del, id_card,
+    create_time
   </sql>
 
   <select id="findUserList" resultType="com.lyh.entity.User">
@@ -28,11 +29,8 @@
       and username like concat("%",#{username},"%")
     </if>
     <if test="phone != null and phone != ''">
-      and phone_number like concat("%",#{phone},"%")
+      and user_phone like concat("%",#{phone},"%")
     </if>
-    <if test="userType != null">
-      and user_type = #{userType}
-    </if>
-    order by id
+    order by create_time desc
   </select>
 </mapper>

@@ -4,8 +4,10 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
+import com.lyh.entity.Admin;
 import com.lyh.entity.User;
 import com.lyh.entity.vo.UserVo;
+import com.lyh.service.AdministratorOperationInformationService;
 import com.lyh.service.UserService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
@@ -31,6 +33,9 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private AdministratorOperationInformationService administratorOperationInformationService;
+
     /**
      * @return
      * @Author lyh
@@ -46,7 +51,6 @@ public class UserController {
             String token = TokenUtils.token(user1.getId());
             userVo.setUser(user1);
             userVo.setToken(token);
-            userVo.setUserType(user1.getUserType() == 2 ? "admin" : "user");
             System.out.println("登录成功！ 用户名：" + user1.getUsername());
             return ResultUtil.ok(userVo);
         }
@@ -66,20 +70,21 @@ public class UserController {
         if (userService.addUser(user) == 1) {
             return ResultUtil.ok(user);
         }
-        return ResultUtil.ok();
+        return ResultUtil.fail("注册失败");
     }
 
     /**
      * @return
      * @Author lyh
      * @Description //TODO 删除
-     * @Param
+     * @Param [id 用户id,session ]
      * @Date 2021/12/17
      **/
     @GetMapping("delUser")
-    public Result<Boolean> delUser(Long id) {
-//        Long _id = Long.parseLong(id);
+    public Result<Boolean> delUser(Long id, Long adminId) {
         if (userService.delUser(id) == 1) {
+            //如果删除成功,则添加删除的记录
+            administratorOperationInformationService.addRecord(id,adminId);
             return ResultUtil.ok(true);
         }
         return ResultUtil.fail("删除失败");
@@ -93,8 +98,9 @@ public class UserController {
      * @Date 2021/12/17
      **/
     @PostMapping("edit")
-    public Result<User> editUser(@RequestBody User user) {
-        User userInfo = userService.editUser(user);
+    public Result<User> editUser(@RequestBody User user,HttpSession session) {
+        Admin admin = (Admin)session.getAttribute("admin");
+        User userInfo = userService.editUser(user, admin);
         return ResultUtil.ok(userInfo);
     }
 
@@ -106,11 +112,11 @@ public class UserController {
      * @Date 2021/12/16
      **/
     @GetMapping("findUserList")
-    public Result<PageInfo<User>> findUserList(String username, String phone, Integer userType,
+    public Result<PageInfo<User>> findUserList(String username, String phone,
                                                @RequestParam(defaultValue = "1") int pageIndex,
                                                @RequestParam(defaultValue = "10") int pageSize) {
         Page<User> page = PageHelper.startPage(pageIndex, pageSize);
-        List<User> userList = userService.findUserList(username, phone, userType);
+        List<User> userList = userService.findUserList(username, phone);
         PageInfo<User> pageInfo = page.toPageInfo();
         pageInfo.setList(userList);
         return ResultUtil.ok(pageInfo);
@@ -180,4 +186,5 @@ public class UserController {
         System.out.println("退出登录");
         return ResultUtil.ok("退出登录");
     }
+
 }
