@@ -1,6 +1,8 @@
 package com.lyh.service.impl;
 
+import com.lyh.dao.ArticleMapper;
 import com.lyh.dao.ArticleTypeMapper;
+import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.ArticleService;
@@ -20,6 +22,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Resource
     private ArticleTypeMapper articleTypeMapper;
+    @Resource
+
+    private ArticleMapper articleMapper;
 
     @Override
     public Integer addArticleType(ArticleType articleType) {
@@ -39,5 +44,10 @@ public class ArticleServiceImpl implements ArticleService {
         articleType.setId(id);
         articleType.setIsDel(DelEnum.IS_DEL.getValue());
         return articleTypeMapper.updateByPrimaryKeySelective(articleType);
+    }
+
+    @Override
+    public boolean addArticle(Article article) {
+        return articleMapper.insert(article) == 1;
     }
 }

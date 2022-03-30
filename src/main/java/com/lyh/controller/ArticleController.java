@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyh.entity.Admin;
+import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
 import com.lyh.service.AdministratorOperationInformationService;
 import com.lyh.service.ArticleService;
@@ -23,7 +24,6 @@ import java.util.List;
  */
 @RestController
 @Slf4j
-@CrossOrigin
 @RequestMapping("article")
 public class ArticleController {
 
@@ -84,5 +84,16 @@ public class ArticleController {
         PageInfo<ArticleType> pageInfo = page.toPageInfo();
         pageInfo.setList(articleTypeList);
         return ResultUtil.ok(pageInfo);
+    }
+
+
+    @PostMapping("addArticle")
+    public Result<Boolean> addArticle(@RequestBody Article article){
+        boolean isAdd = articleService.addArticle(article);
+        if(isAdd){
+            return ResultUtil.ok(true);
+        }
+        log.info("文章添加失败");
+        return ResultUtil.fail("文章添加失败");
     }
 }

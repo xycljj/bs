@@ -51,7 +51,7 @@ public class UserController {
             String token = TokenUtils.token(user1.getId());
             userVo.setUser(user1);
             userVo.setToken(token);
-            System.out.println("登录成功！ 用户名：" + user1.getUsername());
+            log.info("用户 "+ user1.getUsername() +" 登录成功");
             return ResultUtil.ok(userVo);
         }
         return ResultUtil.fail("用户名密码错误");
@@ -183,7 +183,7 @@ public class UserController {
      **/
     @PostMapping("logout")
     public Result<String> logout() {
-        System.out.println("退出登录");
+        log.info("用户退出登录");
         return ResultUtil.ok("退出登录");
     }
 

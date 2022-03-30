@@ -136,6 +136,7 @@ public class AdminController {
     public Result<String> logout(HttpSession session) {
         System.out.println("退出登录");
         session.removeAttribute("admin");
+        log.info("管理员退出登录");
         return ResultUtil.ok("退出登录");
     }
 
