@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,6 +49,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public boolean addArticle(Article article) {
+        article.setCreateTime(new Date());
+        article.setIsDel(DelEnum.IS_NOT_DEL.getValue());
         return articleMapper.insert(article) == 1;
     }
 }

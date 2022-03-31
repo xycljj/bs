@@ -86,7 +86,13 @@ public class ArticleController {
         return ResultUtil.ok(pageInfo);
     }
 
-
+    /**
+    * @return boolean 是否成功存入数据库
+    * @Author lyh
+    * @Description 文章发布
+    * @Param article 文章
+    * @Date 2022/3/31
+    **/
     @PostMapping("addArticle")
     public Result<Boolean> addArticle(@RequestBody Article article){
         boolean isAdd = articleService.addArticle(article);
@@ -94,6 +100,6 @@ public class ArticleController {
             return ResultUtil.ok(true);
         }
         log.info("文章添加失败");
-        return ResultUtil.fail("文章添加失败");
+        return ResultUtil.fail();
     }
 }

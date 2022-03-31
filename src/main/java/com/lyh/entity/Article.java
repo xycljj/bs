@@ -37,7 +37,7 @@ public class Article implements Serializable {
     /**
      * 软删除(0未删除,1已删除)
      */
-    private String isDel;
+    private Integer isDel;
 
     /**
      * 文章类型id
