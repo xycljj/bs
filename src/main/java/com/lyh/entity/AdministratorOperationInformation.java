@@ -1,6 +1,8 @@
 package com.lyh.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 
 import javax.persistence.Id;
@@ -34,5 +36,10 @@ public class AdministratorOperationInformation implements Serializable {
      * 操作信息
      */
     private String message;
+
+    /**
+     * 操作时间
+     */
+    private Date createTime;
 
 }

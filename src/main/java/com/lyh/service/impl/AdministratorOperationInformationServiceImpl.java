@@ -11,6 +11,7 @@ import com.lyh.service.UserService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * @author lyh
@@ -36,6 +37,7 @@ public class AdministratorOperationInformationServiceImpl implements Administrat
         administratorOperationInformation.setAdminId(adminId);
         administratorOperationInformation.setAdminName(admin.getAdminName());
         administratorOperationInformation.setMessage(admin.getAdminName()+"删除了<"+user.getName()+">的信息");
+        administratorOperationInformation.setCreateTime(new Date());
         administratorOperationInformationMapper.insert(administratorOperationInformation);
     }
 }

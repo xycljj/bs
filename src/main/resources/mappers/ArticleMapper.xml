@@ -16,5 +16,14 @@
   <sql id="Base_Column_List">
     id, title, description, create_time, is_del, article_type_id, user_id
   </sql>
-
+<select id="selectArticleList" resultType="com.lyh.entity.Article">
+    select
+        id, title, description, create_time as createTime, is_del as isDel, article_type_id as articleTypeId, user_id as userId
+    from
+        article
+    where is_del = 0
+        <if test="title != null">
+            and title like concat("%",#{title},"%")
+        </if>
+</select>
 </mapper>

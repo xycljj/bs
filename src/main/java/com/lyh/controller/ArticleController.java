@@ -6,6 +6,8 @@ import com.github.pagehelper.PageInfo;
 import com.lyh.entity.Admin;
 import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
+import com.lyh.entity.User;
+import com.lyh.entity.vo.ArticleVo;
 import com.lyh.service.AdministratorOperationInformationService;
 import com.lyh.service.ArticleService;
 import com.lyh.utils.Result;
@@ -101,5 +103,23 @@ public class ArticleController {
         }
         log.info("文章添加失败");
         return ResultUtil.fail();
+    }
+    
+    /**
+    * @return
+    * @Author lyh
+    * @Description 查询所有文章
+    * @Param 
+    * @Date 2022/4/1
+    **/
+    @GetMapping("findArticleList")
+    public Result<PageInfo<ArticleVo>> findArticleList(String title,
+                                                    @RequestParam(defaultValue = "1") int pageIndex,
+                                                    @RequestParam(defaultValue = "10") int pageSize){
+        Page<ArticleVo> page = PageHelper.startPage(pageIndex, pageSize);
+        List<ArticleVo> articleList = articleService.findArticleList(title);
+        PageInfo<ArticleVo> pageInfo = page.toPageInfo();
+        pageInfo.setList(articleList);
+        return ResultUtil.ok(pageInfo);
     }
 }

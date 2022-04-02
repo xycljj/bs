@@ -2,14 +2,17 @@ package com.lyh.service.impl;
 
 import com.lyh.dao.ArticleMapper;
 import com.lyh.dao.ArticleTypeMapper;
+import com.lyh.dao.UserMapper;
 import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
+import com.lyh.entity.vo.ArticleVo;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.ArticleService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,9 +26,12 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Resource
     private ArticleTypeMapper articleTypeMapper;
-    @Resource
 
+    @Resource
     private ArticleMapper articleMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     @Override
     public Integer addArticleType(ArticleType articleType) {
@@ -52,5 +58,18 @@ public class ArticleServiceImpl implements ArticleService {
         article.setCreateTime(new Date());
         article.setIsDel(DelEnum.IS_NOT_DEL.getValue());
         return articleMapper.insert(article) == 1;
+    }
+
+    @Override
+    public List<ArticleVo> findArticleList(String title) {
+        List<Article> articleList = articleMapper.selectArticleList(title);
+        List<ArticleVo> articleVoList = new ArrayList<>();
+        for(Article article : articleList){
+            ArticleVo articleVo = new ArticleVo();
+            articleVo.setArticle(article);
+            articleVo.setUsername(userMapper.selectByPrimaryKey(article.getUserId()).getUsername());
+            articleVoList.add(articleVo);
+        }
+        return articleVoList;
     }
 }

@@ -2,6 +2,7 @@ package com.lyh.service;
 
 import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
+import com.lyh.entity.vo.ArticleVo;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface ArticleService {
     Integer delArticleType(Long id);
 
     boolean addArticle(Article article);
+
+    List<ArticleVo> findArticleList(String title);
 }
