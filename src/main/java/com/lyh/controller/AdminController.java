@@ -11,13 +11,21 @@ import com.lyh.service.AdminService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
 import com.lyh.utils.TokenUtils;
+import com.lyh.utils.UploadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.springframework.lang.UsesSunMisc;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +52,7 @@ public class AdminController {
      * @Date 2022/1/19
      **/
     @PostMapping("login")
-    public Result<AdminVO> adminLogin(@RequestBody Admin admin, HttpSession session) {
+    public Result<AdminVO> adminLogin(@RequestBody Admin admin) {
         Admin admin1 = adminService.login(admin);
         if (admin1 != null) {
             AdminVO adminVO = new AdminVO();
@@ -52,7 +60,6 @@ public class AdminController {
             adminVO.setAdmin(admin1);
             adminVO.setToken(token);
             log.info("------------管理员登录-------------");
-            session.setAttribute("admin",admin);
             return ResultUtil.ok(adminVO);
         }
         return ResultUtil.fail("用户名密码错误");
@@ -138,6 +145,24 @@ public class AdminController {
         session.removeAttribute("admin");
         log.info("管理员退出登录");
         return ResultUtil.ok("退出登录");
+    }
+
+    /**
+     * @return
+     * @Author lyh
+     * @Description 上传图片(头像)
+     * @Param
+     * @Date 2022/4/5
+     **/
+    @PostMapping("avator")
+    public Result<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        String url = null;
+        try {
+            url = UploadUtils.uploadFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.ok(url);
     }
 
 }

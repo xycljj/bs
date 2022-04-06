@@ -64,5 +64,20 @@ public class User implements Serializable {
      */
     private Date createTime;
 
+    /**
+     * 头像
+     */
+    private String avator;
+
+    /**
+     * 性别
+     */
+    private int gender;
+
+    /**
+     * 生日
+     */
+    private Date birthday;
+
     private static final long serialVersionUID = 1L;
 }

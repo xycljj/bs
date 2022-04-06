@@ -23,6 +23,7 @@ public class ResultUtil {
     public static <T> Result<T> ok(T data) {
         return ResultUtil.ok(SUCCESS_MESSAGE, data);
     }
+
     public static <T> Result<PageInfo<T>> ok(PageInfo<T> data) {
         return ResultUtil.ok(SUCCESS_MESSAGE, PageVo.buildFromPageInfo(data));
 
@@ -51,6 +52,14 @@ public class ResultUtil {
     public static <T> Result<T> fail(String message, T data) {
         Result<T> result = new Result<>();
         result.setCode(ResultCodeEnum.FAIL.getValue());
+        result.setMessage(message);
+        result.setData(data);
+        return result;
+    }
+
+    public static <T> Result<T> fail(int code, String message, T data) {
+        Result<T> result = new Result<>();
+        result.setCode(code);
         result.setMessage(message);
         result.setData(data);
         return result;

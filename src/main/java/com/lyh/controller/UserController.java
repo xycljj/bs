@@ -14,9 +14,13 @@ import com.lyh.utils.ResultUtil;
 import com.lyh.utils.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.lyh.utils.UploadUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -185,6 +189,24 @@ public class UserController {
     public Result<String> logout() {
         log.info("用户退出登录");
         return ResultUtil.ok("退出登录");
+    }
+
+    /**
+     * @return
+     * @Author lyh
+     * @Description 上传图片(头像)
+     * @Param
+     * @Date 2022/4/5
+     **/
+    @PostMapping("avator")
+    public Result<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        String url = null;
+        try {
+            url = UploadUtils.uploadFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.ok(url);
     }
 
 }
