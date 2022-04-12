@@ -27,4 +27,6 @@ public interface UserService {
     User editUser(User user,Admin admin);
 
     User login(User user);
+
+    void changeUserInfo(Long userId, String url);
 }

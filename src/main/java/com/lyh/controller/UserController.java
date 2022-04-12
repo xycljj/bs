@@ -199,14 +199,15 @@ public class UserController {
      * @Date 2022/4/5
      **/
     @PostMapping("avator")
-    public Result<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public Result<Boolean> uploadFile(@RequestParam("file") MultipartFile file,Long userId) {
         String url = null;
         try {
             url = UploadUtils.uploadFile(file);
+            userService.changeUserInfo(userId,url);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return ResultUtil.ok(url);
+        return ResultUtil.ok("上传成功",true);
     }
 
 }

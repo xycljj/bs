@@ -46,14 +46,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findUserList(String username,String phone) {
-        return userMapper.findUserList(username,phone);
+    public List<User> findUserList(String username, String phone) {
+        return userMapper.findUserList(username, phone);
     }
 
     @Override
     public User findUserByUsername(String username) {
         Example example = new Example(User.class);
-        example.createCriteria().andEqualTo("username",username).andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue());
+        example.createCriteria().andEqualTo("username", username).andEqualTo("isDel", DelEnum.IS_NOT_DEL.getValue());
         return userMapper.selectOneByExample(example);
     }
 
@@ -66,27 +66,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User editUser(User user,Admin admin) {
-        userMapper.updateByPrimaryKeySelective(user);
-        //添加操作记录
-        AdministratorOperationInformation administratorOperationInformation = new AdministratorOperationInformation();
-        administratorOperationInformation.setAdminId(admin.getId());
-        administratorOperationInformation.setAdminName(admin.getAdminName());
-        administratorOperationInformation.setMessage(admin.getAdminName()+" 修改了 "+user.getName()+" 的信息");
-        administratorOperationInformationMapper.insert(administratorOperationInformation);
+    public User editUser(User user, Admin admin) {
+        if (admin == null) {
+            userMapper.updateByPrimaryKeySelective(user);
+        }else{
+            userMapper.updateByPrimaryKeySelective(user);
+            //添加操作记录
+            AdministratorOperationInformation administratorOperationInformation = new AdministratorOperationInformation();
+            administratorOperationInformation.setAdminId(admin.getId());
+            administratorOperationInformation.setAdminName(admin.getAdminName());
+            administratorOperationInformation.setMessage(admin.getAdminName() + " 修改了 " + user.getName() + " 的信息");
+            administratorOperationInformationMapper.insert(administratorOperationInformation);
+        }
         return user;
     }
 
     @Override
     public User login(User user) {
         Example example = new Example(User.class);
-        example.createCriteria().andEqualTo("username",user.getUsername())
-                .andEqualTo("password",user.getPassword())
-                .andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue());
+        example.createCriteria().andEqualTo("username", user.getUsername())
+                .andEqualTo("password", user.getPassword())
+                .andEqualTo("isDel", DelEnum.IS_NOT_DEL.getValue());
         User user1 = userMapper.selectOneByExample(example);
-        if(user1 == null){
+        if (user1 == null) {
             return null;
         }
         return user1;
+    }
+
+    @Override
+    public void changeUserInfo(Long userId, String url) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        user.setAvator(url);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 }

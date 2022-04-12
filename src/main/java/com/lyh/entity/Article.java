@@ -54,6 +54,11 @@ public class Article implements Serializable {
      */
     private String content;
 
+    /**
+     * 封面地址
+     */
+    private String cover;
+
     private static final long serialVersionUID = 1L;
 
 }

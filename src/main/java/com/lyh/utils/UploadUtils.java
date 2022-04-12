@@ -63,11 +63,11 @@ public class UploadUtils {
         try {
             Response response = uploadManager.put(fileBytes, key, upToken);
             DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
-            System.out.println(putRet.hash);
-            System.out.println(putRet.key);
+            /*System.out.println(putRet.hash);
+            System.out.println(putRet.key);*/
         } catch (QiniuException e) {
             e.printStackTrace();
         }
-        return null;
+        return "http://r9wh5l95k.hd-bkt.clouddn.com/"+key;
     }
 }

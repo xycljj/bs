@@ -61,8 +61,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleVo> findArticleList(String title) {
-        List<Article> articleList = articleMapper.selectArticleList(title);
+    public List<ArticleVo> findArticleList(String title, Long userId) {
+        List<Article> articleList = articleMapper.selectArticleList(title,userId);
         List<ArticleVo> articleVoList = new ArrayList<>();
         for(Article article : articleList){
             ArticleVo articleVo = new ArticleVo();
@@ -71,5 +71,24 @@ public class ArticleServiceImpl implements ArticleService {
             articleVoList.add(articleVo);
         }
         return articleVoList;
+    }
+
+    @Override
+    public void changeArticleCover(Long articleId, String url) {
+        Article article = articleMapper.selectByPrimaryKey(articleId);
+        article.setCover(url);
+        articleMapper.updateByPrimaryKeySelective(article);
+    }
+
+    @Override
+    public List<Article> getArticlesByUserId(Long userId) {
+        Example example = new Example(Article.class);
+        example.createCriteria().andEqualTo("userId",userId);
+        return articleMapper.selectByExample(example);
+    }
+
+    @Override
+    public Article getArticlesById(Long articleId) {
+        return articleMapper.selectByPrimaryKey(articleId);
     }
 }

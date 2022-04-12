@@ -22,6 +22,9 @@
     from
         article
     where is_del = 0
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
         <if test="title != null">
             and title like concat("%",#{title},"%")
         </if>

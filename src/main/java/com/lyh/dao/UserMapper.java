@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface UserMapper extends BaseMapper<User> {
 
-    List<User> findUserList(@Param("username") String username,@Param("phone") String phone);
+    List<User> findUserList(@Param("username") String username, @Param("phone") String phone);
 
 }

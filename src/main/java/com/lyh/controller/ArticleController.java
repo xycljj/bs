@@ -12,10 +12,13 @@ import com.lyh.service.AdministratorOperationInformationService;
 import com.lyh.service.ArticleService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
+import com.lyh.utils.UploadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -108,18 +111,65 @@ public class ArticleController {
     /**
     * @return
     * @Author lyh
-    * @Description 查询所有文章
+    * @Description 查询文章
     * @Param 
     * @Date 2022/4/1
     **/
     @GetMapping("findArticleList")
-    public Result<PageInfo<ArticleVo>> findArticleList(String title,
+    public Result<PageInfo<ArticleVo>> findArticleList(String title, Long userId,
                                                     @RequestParam(defaultValue = "1") int pageIndex,
                                                     @RequestParam(defaultValue = "10") int pageSize){
         Page<ArticleVo> page = PageHelper.startPage(pageIndex, pageSize);
-        List<ArticleVo> articleList = articleService.findArticleList(title);
+        List<ArticleVo> articleList = articleService.findArticleList(title,userId);
         PageInfo<ArticleVo> pageInfo = page.toPageInfo();
         pageInfo.setList(articleList);
         return ResultUtil.ok(pageInfo);
     }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 修改上传封面
+    * @Param
+    * @Date 2022/4/12
+    **/
+    @PostMapping("avator")
+    public Result<Boolean> uploadFile(@RequestParam("file") MultipartFile file, Long articleId) {
+        String url = null;
+        try {
+            url = UploadUtils.uploadFile(file);
+            articleService.changeArticleCover(articleId,url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.ok("上传成功",true);
+    }
+
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 根据用户id查询文章
+    * @Param
+    * @Date 2022/4/12
+    **/
+    @GetMapping("myArticles")
+    public Result<List<Article>> getArticleByUserId(Long userId){
+        List<Article> articleList = articleService.getArticlesByUserId(userId);
+        return ResultUtil.ok(articleList);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 根据文章id查询
+    * @Param
+    * @Date 2022/4/12
+    **/
+    @GetMapping("articleById")
+    public Result<Article> getArticleById(Long articleId){
+        Article article = articleService.getArticlesById(articleId);
+        return ResultUtil.ok(article);
+    }
+
 }

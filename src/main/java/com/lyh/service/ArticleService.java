@@ -21,5 +21,11 @@ public interface ArticleService {
 
     boolean addArticle(Article article);
 
-    List<ArticleVo> findArticleList(String title);
+    List<ArticleVo> findArticleList(String title, Long userId);
+
+    void changeArticleCover(Long articleId, String url);
+
+    List<Article> getArticlesByUserId(Long userId);
+
+    Article getArticlesById(Long articleId);
 }
