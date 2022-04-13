@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface ArticleService {
 
-    Integer addArticleType(ArticleType articleType);
+    int addArticleType(ArticleType articleType);
 
     List<ArticleType> findArticleTypeList();
 
@@ -21,11 +21,15 @@ public interface ArticleService {
 
     boolean addArticle(Article article);
 
-    List<ArticleVo> findArticleList(String title, Long userId);
+    List<ArticleVo> findArticleList(String title, String username);
 
     void changeArticleCover(Long articleId, String url);
 
     List<Article> getArticlesByUserId(Long userId);
 
     Article getArticlesById(Long articleId);
+
+    Long getNewArticleId(String name);
+
+    List<Article> getArticleByTypeId(Long id);
 }

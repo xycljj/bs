@@ -40,9 +40,9 @@ public class Article implements Serializable {
     private Integer isDel;
 
     /**
-     * 文章类型id
+     * 文章类型id串
      */
-    private Long articleTypeId;
+    private String articleTypeId;
 
     /**
      * 创建人id
@@ -58,6 +58,11 @@ public class Article implements Serializable {
      * 封面地址
      */
     private String cover;
+
+    /**
+     * 文章标签
+     */
+    private String articleTags;
 
     private static final long serialVersionUID = 1L;
 

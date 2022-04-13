@@ -8,6 +8,7 @@ import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
 import com.lyh.entity.User;
 import com.lyh.entity.vo.ArticleVo;
+import com.lyh.enums.DelEnum;
 import com.lyh.service.AdministratorOperationInformationService;
 import com.lyh.service.ArticleService;
 import com.lyh.utils.Result;
@@ -46,11 +47,14 @@ public class ArticleController {
      * @Date 2022/2/7
      **/
     @PostMapping("addArticleType")
-    public Result<Boolean> addArticleType(@RequestBody ArticleType articleType) {
+    public Result<ArticleType> addArticleType(@RequestBody ArticleType articleType) {
         articleType.setCreateTime(new Date());
+        articleType.setIsDel(DelEnum.IS_NOT_DEL.getValue());
         int i = articleService.addArticleType(articleType);
         if (i == 1) {
-            return ResultUtil.ok(true);
+            Long newArticleId = articleService.getNewArticleId(articleType.getName());
+            articleType.setId(newArticleId);
+            return ResultUtil.ok(articleType);
         } else {
             return ResultUtil.fail("添加失败");
         }
@@ -116,11 +120,11 @@ public class ArticleController {
     * @Date 2022/4/1
     **/
     @GetMapping("findArticleList")
-    public Result<PageInfo<ArticleVo>> findArticleList(String title, Long userId,
+    public Result<PageInfo<ArticleVo>> findArticleList(String title, String username,
                                                     @RequestParam(defaultValue = "1") int pageIndex,
                                                     @RequestParam(defaultValue = "10") int pageSize){
         Page<ArticleVo> page = PageHelper.startPage(pageIndex, pageSize);
-        List<ArticleVo> articleList = articleService.findArticleList(title,userId);
+        List<ArticleVo> articleList = articleService.findArticleList(title,username);
         PageInfo<ArticleVo> pageInfo = page.toPageInfo();
         pageInfo.setList(articleList);
         return ResultUtil.ok(pageInfo);
@@ -154,7 +158,9 @@ public class ArticleController {
     * @Date 2022/4/12
     **/
     @GetMapping("myArticles")
-    public Result<List<Article>> getArticleByUserId(Long userId){
+    public Result<List<Article>> getArticleByUserId(Long userId, @RequestParam(defaultValue = "1") Integer pageIndex,
+                                                    @RequestParam(defaultValue = "10") Integer pageSize){
+        PageHelper.startPage(pageIndex,pageSize);
         List<Article> articleList = articleService.getArticlesByUserId(userId);
         return ResultUtil.ok(articleList);
     }
@@ -170,6 +176,21 @@ public class ArticleController {
     public Result<Article> getArticleById(Long articleId){
         Article article = articleService.getArticlesById(articleId);
         return ResultUtil.ok(article);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 根据文章类型id查询
+    * @Param id 文章类型主键
+    * @Date 2022/4/13
+    **/
+    @GetMapping("getArticleByTypeId")
+    public  Result<List<Article>> getArticleByTypeId(Long id, @RequestParam(defaultValue = "1") Integer pageIndex,
+                                                     @RequestParam(defaultValue = "6") Integer pageSize){
+//        PageHelper.startPage(pageIndex,pageSize);
+        List<Article> list = articleService.getArticleByTypeId(id);
+        return ResultUtil.ok(list);
     }
 
 }

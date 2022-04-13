@@ -18,15 +18,19 @@
   </sql>
 <select id="selectArticleList" resultType="com.lyh.entity.Article">
     select
-        id, title, description, create_time as createTime, is_del as isDel, article_type_id as articleTypeId, user_id as userId
+        a.id, a.title, a.description, a.create_time as createTime, a.is_del as isDel, a.article_type_id as articleTypeId,
+        a.user_id as userId
     from
-        article
-    where is_del = 0
-        <if test="userId != null">
-            and user_id = #{userId}
+        article a left join `user` u on a.user_id = u.id
+    where a.is_del = 0 and u.is_del = 0
+        <if test="username != null">
+            and u.username like concat("%",#{username},"%")
         </if>
         <if test="title != null">
             and title like concat("%",#{title},"%")
         </if>
+    order by
+        a.create_time desc
 </select>
+
 </mapper>

@@ -12,5 +12,6 @@ import java.util.List;
  */
 public interface ArticleMapper extends BaseMapper<Article> {
 
-    List<Article> selectArticleList(@Param("title") String title, @Param("userId") Long userId);
+    List<Article> selectArticleList(@Param("title") String title, @Param("username") String username);
+
 }

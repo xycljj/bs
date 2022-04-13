@@ -34,7 +34,7 @@ public class ArticleServiceImpl implements ArticleService {
     private UserMapper userMapper;
 
     @Override
-    public Integer addArticleType(ArticleType articleType) {
+    public int addArticleType(ArticleType articleType) {
         return articleTypeMapper.insert(articleType);
     }
 
@@ -61,8 +61,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleVo> findArticleList(String title, Long userId) {
-        List<Article> articleList = articleMapper.selectArticleList(title,userId);
+    public List<ArticleVo> findArticleList(String title, String username) {
+        List<Article> articleList = articleMapper.selectArticleList(title,username);
         List<ArticleVo> articleVoList = new ArrayList<>();
         for(Article article : articleList){
             ArticleVo articleVo = new ArticleVo();
@@ -90,5 +90,29 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Article getArticlesById(Long articleId) {
         return articleMapper.selectByPrimaryKey(articleId);
+    }
+
+    @Override
+    public Long getNewArticleId(String name) {
+        Example example = new Example(ArticleType.class);
+        example.createCriteria().andEqualTo("name",name).andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue());
+        ArticleType articleType = articleTypeMapper.selectOneByExample(example);
+        return articleType.getId();
+    }
+
+    @Override
+    public List<Article> getArticleByTypeId(Long id) {
+        List<Article> articleList = articleMapper.selectAll();
+        List<Article> useArticleList = new ArrayList<>();
+        for(Article article: articleList){
+            String[] split = article.getArticleTypeId().split(",");
+            for(String _id: split){
+                if(String.valueOf(id).equals(_id)) {
+                    useArticleList.add(article);
+                    break;
+                }
+            }
+        }
+        return useArticleList;
     }
 }
