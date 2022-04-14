@@ -67,7 +67,7 @@ public class User implements Serializable {
     /**
      * 头像
      */
-    private String avator;
+    private String avatar;
 
     /**
      * 性别

@@ -32,4 +32,6 @@ public interface ArticleService {
     Long getNewArticleId(String name);
 
     List<Article> getArticleByTypeId(Long id);
+
+    Integer countAuthorsArticles(Long id);
 }

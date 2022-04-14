@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changeUserInfo(Long userId, String url) {
         User user = userMapper.selectByPrimaryKey(userId);
-        user.setAvator(url);
+        user.setAvatar(url);
         userMapper.updateByPrimaryKeySelective(user);
     }
 }

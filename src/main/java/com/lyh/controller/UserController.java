@@ -6,8 +6,11 @@ import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
 import com.lyh.entity.Admin;
 import com.lyh.entity.User;
+import com.lyh.entity.UserFocus;
 import com.lyh.entity.vo.UserVo;
 import com.lyh.service.AdministratorOperationInformationService;
+import com.lyh.service.ArticleService;
+import com.lyh.service.UserFocusService;
 import com.lyh.service.UserService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
@@ -36,6 +39,12 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private ArticleService articleService;
+
+    @Resource
+    private UserFocusService userFocusService;
 
     @Resource
     private AdministratorOperationInformationService administratorOperationInformationService;
@@ -208,6 +217,44 @@ public class UserController {
             e.printStackTrace();
         }
         return ResultUtil.ok("上传成功",true);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 获取该作者的所有文章总数
+    * @Param  id 作者id
+    * @Date 2022/4/14
+    **/
+    @GetMapping("countAuthorsArticles")
+    public Result<Integer> countAuthorsArticles(Long id){
+        Integer count = articleService.countAuthorsArticles(id);
+        return ResultUtil.ok(count);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 添加关注
+    * @Param
+    * @Date 2022/4/14
+    **/
+    @PostMapping("focus")
+    public Result<Boolean> focus(@RequestBody UserFocus userFocus){
+        boolean flag = userFocusService.focus(userFocus);
+        return ResultUtil.ok(flag);
+    }
+
+    @PostMapping("cancelFocus")
+    public Result<Boolean> cancelFocus(@RequestBody UserFocus userFocus){
+        boolean flag = userFocusService.cancelFocus(userFocus);
+        return ResultUtil.ok(flag);
+    }
+
+    @PostMapping("isFocused")
+    public Result<Boolean> isFocused(@RequestBody UserFocus userFocus){
+        boolean flag = userFocusService.isFocused(userFocus);
+        return ResultUtil.ok(flag);
     }
 
 }

@@ -115,4 +115,11 @@ public class ArticleServiceImpl implements ArticleService {
         }
         return useArticleList;
     }
+
+    @Override
+    public Integer countAuthorsArticles(Long id) {
+        Example example = new Example(Article.class);
+        example.createCriteria().andEqualTo("userId",id);
+        return articleMapper.selectCountByExample(example);
+    }
 }
