@@ -3,14 +3,12 @@ package com.lyh.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lyh.entity.Admin;
-import com.lyh.entity.Article;
-import com.lyh.entity.ArticleType;
-import com.lyh.entity.User;
+import com.lyh.entity.*;
 import com.lyh.entity.vo.ArticleVo;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.AdministratorOperationInformationService;
 import com.lyh.service.ArticleService;
+import com.lyh.utils.RedisUtil;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
 import com.lyh.utils.UploadUtils;
@@ -22,6 +20,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @ClassName: ArticleController
@@ -38,6 +37,10 @@ public class ArticleController {
 
     @Resource
     private AdministratorOperationInformationService administratorOperationInformationService;
+
+    @Resource
+    private RedisUtil redisUtil;
+
 
     /**
      * @return
@@ -87,7 +90,7 @@ public class ArticleController {
     **/
     @GetMapping("articleTypeList")
     public Result<PageInfo<ArticleType>> articleTypeList(@RequestParam(defaultValue = "1") Integer pageIndex,
-                                                         @RequestParam(defaultValue = "10") Integer pageSize){
+                                                         @RequestParam(defaultValue = "8") Integer pageSize){
         Page<ArticleType> page = PageHelper.startPage(pageIndex,pageSize);
         List<ArticleType> articleTypeList = articleService.findArticleTypeList();
         PageInfo<ArticleType> pageInfo = page.toPageInfo();
@@ -111,7 +114,17 @@ public class ArticleController {
         log.info("文章添加失败");
         return ResultUtil.fail();
     }
-    
+
+    @PostMapping("editArticle")
+    public Result<Boolean> editArticle(@RequestBody Article article){
+        boolean isAdd = articleService.editArticle(article);
+        if(isAdd){
+            return ResultUtil.ok(true);
+        }
+        log.info("文章编辑失败");
+        return ResultUtil.fail("文章编辑失败");
+    }
+
     /**
     * @return
     * @Author lyh
@@ -186,11 +199,63 @@ public class ArticleController {
     * @Date 2022/4/13
     **/
     @GetMapping("getArticleByTypeId")
-    public  Result<List<Article>> getArticleByTypeId(Long id, @RequestParam(defaultValue = "1") Integer pageIndex,
+    public Result<List<Article>> getArticleByTypeId(Long id, @RequestParam(defaultValue = "1") Integer pageIndex,
                                                      @RequestParam(defaultValue = "6") Integer pageSize){
 //        PageHelper.startPage(pageIndex,pageSize);
         List<Article> list = articleService.getArticleByTypeId(id);
         return ResultUtil.ok(list);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description  点赞
+    * @Param
+    * @Date 2022/4/15
+    **/
+    @GetMapping("doLike")
+    public Result<Void> doLike(Long userId, Long articleId){
+        redisUtil.sAdd(String.valueOf(articleId),userId);
+        return ResultUtil.ok();
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 取消点赞
+    * @Param
+    * @Date 2022/4/15
+    **/
+    @GetMapping("doUnLike")
+    public Result<Void> doUnLike(Long userId, Long articleId){
+        redisUtil.srem(String.valueOf(articleId),userId);
+        return ResultUtil.ok();
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 判断用户是否已经对该文章进行点赞
+    * @Param
+    * @Date 2022/4/15
+    **/
+    @GetMapping("userIsLike")
+    public Result<Boolean> userIsLike(Long userId,Long articleId){
+        boolean hasKey = redisUtil.sHasKey(String.valueOf(articleId), userId);
+        return ResultUtil.ok(hasKey);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 文章点赞总数
+    * @Param
+    * @Date 2022/4/15
+    **/
+    @GetMapping("likeCount")
+    public Result<Long> likeCount(Long articleId){
+        long l = redisUtil.sGetSetSize(String.valueOf(articleId));
+        return ResultUtil.ok(l);
     }
 
 }

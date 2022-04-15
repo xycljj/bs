@@ -27,6 +27,10 @@ spring:
   mvc:
     servlet:
       load-on-startup: 1
+  redis:
+    port: 6379
+    host: localhost
+    password:
 
 logging:
   level:

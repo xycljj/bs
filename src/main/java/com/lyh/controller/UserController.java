@@ -245,12 +245,26 @@ public class UserController {
         return ResultUtil.ok(flag);
     }
 
+    /**
+    * @return
+    * @Author lyh
+    * @Description 取消关注
+    * @Param
+    * @Date 2022/4/15
+    **/
     @PostMapping("cancelFocus")
     public Result<Boolean> cancelFocus(@RequestBody UserFocus userFocus){
         boolean flag = userFocusService.cancelFocus(userFocus);
-        return ResultUtil.ok(flag);
+        return ResultUtil.ok(!flag);
     }
 
+    /**
+    * @return
+    * @Author lyh
+    * @Description 是否关注
+    * @Param
+    * @Date 2022/4/15
+    **/
     @PostMapping("isFocused")
     public Result<Boolean> isFocused(@RequestBody UserFocus userFocus){
         boolean flag = userFocusService.isFocused(userFocus);

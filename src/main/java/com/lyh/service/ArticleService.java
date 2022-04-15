@@ -34,4 +34,6 @@ public interface ArticleService {
     List<Article> getArticleByTypeId(Long id);
 
     Integer countAuthorsArticles(Long id);
+
+    boolean editArticle(Article article);
 }

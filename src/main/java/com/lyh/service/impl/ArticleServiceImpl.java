@@ -84,6 +84,7 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> getArticlesByUserId(Long userId) {
         Example example = new Example(Article.class);
         example.createCriteria().andEqualTo("userId",userId);
+        example.setOrderByClause("create_time DESC");
         return articleMapper.selectByExample(example);
     }
 
@@ -121,5 +122,11 @@ public class ArticleServiceImpl implements ArticleService {
         Example example = new Example(Article.class);
         example.createCriteria().andEqualTo("userId",id);
         return articleMapper.selectCountByExample(example);
+    }
+
+    @Override
+    public boolean editArticle(Article article) {
+        article.setCreateTime(new Date());
+        return articleMapper.updateByPrimaryKey(article) == 1;
     }
 }
