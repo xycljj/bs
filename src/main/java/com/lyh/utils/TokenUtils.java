@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 public class TokenUtils {
     //设置过期时间
-    private static final long EXPIRE_DATE=30*60*1000;
+    private static final long EXPIRE_DATE=30*60*1000*2;
     //token秘钥
     private static final String TOKEN_SECRET = "hzddzh";
 

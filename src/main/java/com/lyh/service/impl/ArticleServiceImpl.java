@@ -127,6 +127,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public boolean editArticle(Article article) {
         article.setCreateTime(new Date());
-        return articleMapper.updateByPrimaryKey(article) == 1;
+        return articleMapper.updateByPrimaryKeySelective(article) == 1;
     }
 }

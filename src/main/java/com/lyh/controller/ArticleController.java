@@ -215,7 +215,7 @@ public class ArticleController {
     **/
     @GetMapping("doLike")
     public Result<Void> doLike(Long userId, Long articleId){
-        redisUtil.sAdd(String.valueOf(articleId),userId);
+        redisUtil.sAdd("post:"+ articleId,userId);
         return ResultUtil.ok();
     }
 
@@ -228,7 +228,7 @@ public class ArticleController {
     **/
     @GetMapping("doUnLike")
     public Result<Void> doUnLike(Long userId, Long articleId){
-        redisUtil.srem(String.valueOf(articleId),userId);
+        redisUtil.srem("post:"+ articleId,userId);
         return ResultUtil.ok();
     }
 
@@ -241,7 +241,8 @@ public class ArticleController {
     **/
     @GetMapping("userIsLike")
     public Result<Boolean> userIsLike(Long userId,Long articleId){
-        boolean hasKey = redisUtil.sHasKey(String.valueOf(articleId), userId);
+        boolean hasKey = redisUtil.sHasKey("post:" + articleId, userId);
+        System.out.println(hasKey);
         return ResultUtil.ok(hasKey);
     }
 
@@ -254,7 +255,7 @@ public class ArticleController {
     **/
     @GetMapping("likeCount")
     public Result<Long> likeCount(Long articleId){
-        long l = redisUtil.sGetSetSize(String.valueOf(articleId));
+        long l = redisUtil.sGetSetSize("post:"+articleId);
         return ResultUtil.ok(l);
     }
 

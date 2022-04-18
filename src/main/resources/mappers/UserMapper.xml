@@ -15,7 +15,7 @@
   <sql id="Base_Column_List">
     id, username, password, email, `name` ,
     address, phone, is_del, id_card,
-    create_time, avator, gender, birthday
+    create_time, avatar, gender, birthday
   </sql>
 
   <select id="findUserList" resultType="com.lyh.entity.User">
