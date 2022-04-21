@@ -34,4 +34,16 @@
     order by create_time desc
   </select>
 
+  <select id="selectCloudList" resultType="com.lyh.entity.User">
+    SELECT
+        id, username, avatar
+    FROM
+        `user`
+    <if test="list != null">
+      WHERE id not in
+      <foreach collection="list" open="(" close=")" separator="," item="i">
+        #{i}
+      </foreach>
+    </if>
+  </select>
 </mapper>

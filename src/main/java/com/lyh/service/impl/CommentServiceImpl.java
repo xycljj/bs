@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public List<CommentVo> findComments(Long articleId) {
+    public List<CommentVo> findComments(Long articleId,Long userId) {
         /**
          * 思路: 找到根评论,所有根评论下的回复都作为根评论的子评论来处理,每个子评论中的父评论id作为回复对象,然后进行
          * 按照时间倒序排序即可
@@ -48,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
             commentVo.setAvatar(user.getAvatar());
             commentVo.setUsername(user.getUsername());
             commentVo.setLike(redisUtil.sGetSetSize("post:" + commentVo.getArticleId() + ":comment:" + commentVo.getId() + ":likeListId"));
-            commentVo.setIsLike(redisUtil.sHasKey("post:" + commentVo.getArticleId() + ":comment:" + commentVo.getId() + ":likeListId",commentVo.getUserId()));
+            commentVo.setIsLike(redisUtil.sHasKey("post:" + commentVo.getArticleId() + ":comment:" + commentVo.getId() + ":likeListId",userId));
 //            commentVo.setCommentNum((Long) redisUtil.get("post:" + commentVo.getArticleId() + ":comment:" + commentVo.getId()));
             commentVo.setLikeListId(redisUtil.sGet("post:" + commentVo.getArticleId() + ":comment:" + commentVo.getId() + ":likeListId"));
             List<CommentVo> commentVos1 = commentMapper.selectChildCommentVos(articleId, commentVo.getId());
@@ -64,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
                 commentVo1.set_username(user2.getUsername());
 
                 commentVo1.setLike(redisUtil.sGetSetSize("post:" + commentVo1.getArticleId() + ":comment:" + commentVo1.getId() + ":likeListId"));
-                commentVo1.setIsLike(redisUtil.sHasKey("post:" + commentVo1.getArticleId() + ":comment:" + commentVo1.getId() + ":likeListId",commentVo1.getUserId()));
+                commentVo1.setIsLike(redisUtil.sHasKey("post:" + commentVo1.getArticleId() + ":comment:" + commentVo1.getId() + ":likeListId",userId));
 //                commentVo1.setCommentNum(redisUtil.sGetSetSize("post:" + commentVo1.getArticleId() + ":comment:" + commentVo1.getId()));
                 commentVo1.setLikeListId(redisUtil.sGet("post:" + commentVo1.getArticleId() + ":comment:" + commentVo1.getId() + ":likeListId"));
             }

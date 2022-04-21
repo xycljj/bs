@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyh.dao.MsgInfoMapper">
+    <resultMap id="BaseResultMap" type="com.lyh.entity.MsgInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="from_user_id" jdbcType="BIGINT" property="fromUserId"/>
+        <result column="from_username" jdbcType="VARCHAR" property="fromUsername"/>
+        <result column="to_user_id" jdbcType="BIGINT" property="toUserId"/>
+        <result column="to_username" jdbcType="VARCHAR" property="toUsername"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="un_read_flag" jdbcType="INTEGER" property="unReadFlag"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, from_user_id, from_username, to_user_id,to_username, content, create_time, un_read_flag
+    </sql>
+
+    <update id="msgRead">
+      UPDATE msg_info SET un_read_flag = 1 WHERE from_user_id = #{fromUserId} AND to_user_id = #{toUserId}
+    </update>
+
+    <select id="selectMsgList" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"></include>
+        FROM msg_info
+        WHERE (
+            (to_user_id = #{toUserId} AND from_user_id = #{fromUserId})
+            OR (to_user_id = #{fromUserId} AND from_user_id = #{toUserId})
+        )
+    </select>
+</mapper>

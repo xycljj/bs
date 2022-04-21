@@ -100,4 +100,9 @@ public class UserServiceImpl implements UserService {
         user.setAvatar(url);
         userMapper.updateByPrimaryKeySelective(user);
     }
+
+    @Override
+    public List<User> getCloudList(List<Long> list) {
+        return userMapper.selectCloudList(list);
+    }
 }

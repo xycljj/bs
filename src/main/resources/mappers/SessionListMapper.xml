@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyh.dao.SessionListMapper">
+    <resultMap id="BaseResultMap" type="com.lyh.entity.SessionList">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="to_user_id" jdbcType="BIGINT" property="toUserId"/>
+        <result column="list_name" jdbcType="VARCHAR" property="listName"/>
+        <result column="un_read_count" jdbcType="INTEGER" property="unReadCount"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, to_user_id, list_name, un_read_count
+    </sql>
+    
+    <update id="addUnReadCount">
+        update session_list set un_read_count = un_read_count + 1
+        where user_id = #{userId}
+            and to_user_id = #{toUserId}
+    </update>
+
+    <update id="delUnReadCount">
+    UPDATE session_list SET un_read_count = 0 WHERE user_id = #{fromUserId} AND to_user_id = #{toUserId}
+  </update>
+
+    <select id="selectIdByUser" resultType="java.lang.Long">
+        SELECT id FROM session_list WHERE user_id = #{fromId} AND to_user_id = #{toId}
+    </select>
+
+    <select id="selectByUserId" resultType="com.lyh.entity.vo.SessionListVo">
+        SELECT
+            s.id, s.user_id, s.to_user_id, s.list_name, s.un_read_count , u.avatar
+        FROM
+            session_list s left join `user` u on s.to_user_id = u.id
+        WHERE
+            s.user_id = #{id}
+    </select>
+
+    <select id="selectUserIdByUserId" resultType="java.lang.Long">
+        select
+            to_user_id
+        from
+            session_list
+        WHERE
+            user_id = #{id}
+    </select>
+</mapper>

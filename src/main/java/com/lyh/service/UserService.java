@@ -29,4 +29,6 @@ public interface UserService {
     User login(User user);
 
     void changeUserInfo(Long userId, String url);
+
+    List<User> getCloudList(List<Long> list);
 }

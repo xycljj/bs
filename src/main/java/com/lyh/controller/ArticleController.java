@@ -146,12 +146,31 @@ public class ArticleController {
     /**
     * @return
     * @Author lyh
+    * @Description 上传封面
+    * @Param
+    * @Date 2022/4/19
+    **/
+    @PostMapping("uploadCover")
+    public Result<String> uploadCover(@RequestParam("file") MultipartFile file) {
+        String url = null;
+        try {
+            url = UploadUtils.uploadFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.ok("上传成功",url);
+    }
+
+
+    /**
+    * @return
+    * @Author lyh
     * @Description 修改上传封面
     * @Param
     * @Date 2022/4/12
     **/
-    @PostMapping("avator")
-    public Result<Boolean> uploadFile(@RequestParam("file") MultipartFile file, Long articleId) {
+    @PostMapping("cover")
+    public Result<String> uploadFile(@RequestParam("file") MultipartFile file, Long articleId) {
         String url = null;
         try {
             url = UploadUtils.uploadFile(file);
@@ -159,7 +178,7 @@ public class ArticleController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return ResultUtil.ok("上传成功",true);
+        return ResultUtil.ok("上传成功",url);
     }
 
 

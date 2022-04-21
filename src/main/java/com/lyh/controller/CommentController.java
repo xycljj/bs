@@ -34,8 +34,8 @@ public class CommentController {
      * @Date 2022/4/18
      **/
     @GetMapping("findComments")
-    public Result<List<CommentVo>> findComments(Long articleId) {
-        List<CommentVo> list = commentService.findComments(articleId);
+    public Result<List<CommentVo>> findComments(Long articleId, Long userId) {
+        List<CommentVo> list = commentService.findComments(articleId, userId);
         return ResultUtil.ok(list);
     }
 

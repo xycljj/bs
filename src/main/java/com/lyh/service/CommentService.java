@@ -11,7 +11,7 @@ import java.util.List;
  * @createTime 2022/4/18
  */
 public interface CommentService {
-    List<CommentVo> findComments(Long articleId);
+    List<CommentVo> findComments(Long articleId, Long userId);
 
     Comment addComment(Comment comment);
 }

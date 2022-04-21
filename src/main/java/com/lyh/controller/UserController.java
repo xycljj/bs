@@ -12,13 +12,10 @@ import com.lyh.service.AdministratorOperationInformationService;
 import com.lyh.service.ArticleService;
 import com.lyh.service.UserFocusService;
 import com.lyh.service.UserService;
-import com.lyh.utils.Result;
-import com.lyh.utils.ResultUtil;
-import com.lyh.utils.TokenUtils;
+import com.lyh.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.lyh.utils.UploadUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -65,6 +62,8 @@ public class UserController {
             userVo.setUser(user1);
             userVo.setToken(token);
             log.info("用户 "+ user1.getUsername() +" 登录成功");
+            CurPool.curUserPool.put(user1.getId(), user1);
+            log.info("【websocket消息】连接建立，总数为:"+CurPool.webSockets.size());
             return ResultUtil.ok(userVo);
         }
         return ResultUtil.fail("用户名密码错误");
@@ -195,7 +194,11 @@ public class UserController {
      * @Date 2021/12/29
      **/
     @PostMapping("logout")
-    public Result<String> logout() {
+    public Result<String> logout(Long userId) {
+        CurPool.curUserPool.remove(userId);
+        CurPool.webSockets.remove(userId);
+        CurPool.sessionPool.remove(userId);
+        log.info("【websocket消息】连接断开，总数为:"+CurPool.webSockets.size());
         log.info("用户退出登录");
         return ResultUtil.ok("退出登录");
     }
