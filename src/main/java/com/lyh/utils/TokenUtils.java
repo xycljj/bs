@@ -37,7 +37,7 @@ public class TokenUtils {
             Map<String,Object> header = new HashMap<>();
             header.put("typ","JWT");
             header.put("alg","HS256");
-            //携带username，password信息，生成签名
+            //携带userId信息，生成签名
             token = JWT.create()
                     .withHeader(header)
                     .withClaim("userId",userId).withExpiresAt(date)

@@ -25,15 +25,19 @@ public interface ArticleService {
 
     void changeArticleCover(Long articleId, String url);
 
-    List<Article> getArticlesByUserId(Long userId);
+    List<ArticleVo> getArticlesByUserId(Long userId);
 
     Article getArticlesById(Long articleId);
 
     Long getNewArticleId(String name);
 
-    List<Article> getArticleByTypeId(Long id);
+    List<ArticleVo> getArticleByTypeId(Long id);
 
     Integer countAuthorsArticles(Long id);
 
     boolean editArticle(Article article);
+
+    List<Article> findArticleBySearchStr(String searchStr);
+
+    List<ArticleVo> findArticleByIds(String ids);
 }

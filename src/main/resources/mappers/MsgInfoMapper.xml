@@ -17,7 +17,7 @@
     </sql>
 
     <update id="msgRead">
-      UPDATE msg_info SET un_read_flag = 1 WHERE from_user_id = #{fromUserId} AND to_user_id = #{toUserId}
+      UPDATE msg_info SET un_read_flag = 1 WHERE from_user_id = #{toUserId} AND to_user_id = #{fromUserId} AND un_read_flag = 0
     </update>
 
     <select id="selectMsgList" resultMap="BaseResultMap">

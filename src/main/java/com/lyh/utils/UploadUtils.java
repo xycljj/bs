@@ -41,7 +41,7 @@ public class UploadUtils {
         String filePath = file.getAbsolutePath();
         System.out.println(filePath);
         //Ky表示文件上传到服务器中的名称，为空的话默认为文件Hash值
-        String key = filePath.substring(filePath.lastIndexOf("/") + 1,filePath.lastIndexOf(".")) + System.currentTimeMillis()+ filePath.substring(filePath.lastIndexOf("."));
+        String key = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.lastIndexOf(".")) + System.currentTimeMillis() + filePath.substring(filePath.lastIndexOf("."));
         String upToken = auth.uploadToken(bucketName);
         try {
             Response response = uploadManager.put(filePath, key, upToken);
@@ -58,7 +58,7 @@ public class UploadUtils {
         String filePath = file.getOriginalFilename();
         byte[] fileBytes = file.getBytes();
         //Ky表示文件上传到服务器中的名称，为空的话默认为文件Hash值
-        String key = filePath.substring(0,filePath.lastIndexOf(".")) + System.currentTimeMillis()+ filePath.substring(filePath.lastIndexOf("."));
+        String key = filePath.substring(0, filePath.lastIndexOf(".")) + System.currentTimeMillis() + filePath.substring(filePath.lastIndexOf("."));
         String upToken = auth.uploadToken(bucketName);
         try {
             Response response = uploadManager.put(fileBytes, key, upToken);
@@ -68,6 +68,6 @@ public class UploadUtils {
         } catch (QiniuException e) {
             e.printStackTrace();
         }
-        return "http://r9wh5l95k.hd-bkt.clouddn.com/"+key;
+        return "http://r9wh5l95k.hd-bkt.clouddn.com/"+ key;
     }
 }

@@ -46,4 +46,15 @@
       </foreach>
     </if>
   </select>
+
+  <select id="selectMyFocusUsers" resultType="com.lyh.entity.User">
+    select
+        uf.author_id as id, u.username, u.avatar
+    from
+        user_focus uf left join `user` u  on uf.author_id = u.id
+    where
+        u.is_del = 0
+        and uf.user_id = #{userId}
+
+  </select>
 </mapper>

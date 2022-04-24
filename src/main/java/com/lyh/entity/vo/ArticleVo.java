@@ -20,4 +20,19 @@ public class ArticleVo {
      * 作者用户名
      */
     private String username;
+
+    /**
+     * 点赞数
+     */
+    private Long likeCount;
+
+    /**
+     * 收藏数
+     */
+    private Long collectionCount;
+
+    /**
+     * 阅读量
+     */
+    private Long readCount;
 }

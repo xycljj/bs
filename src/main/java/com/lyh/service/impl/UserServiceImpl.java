@@ -105,4 +105,16 @@ public class UserServiceImpl implements UserService {
     public List<User> getCloudList(List<Long> list) {
         return userMapper.selectCloudList(list);
     }
+
+    @Override
+    public List<User> findMyFocusUsers(Long userId) {
+        return userMapper.selectMyFocusUsers(userId);
+    }
+
+    @Override
+    public List<User> findUserBySearchStr(String searchStr) {
+        Example example = new Example(User.class);
+        example.createCriteria().orLike("username",searchStr);
+        return userMapper.selectByExample(example);
+    }
 }

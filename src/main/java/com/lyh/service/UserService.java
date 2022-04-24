@@ -31,4 +31,8 @@ public interface UserService {
     void changeUserInfo(Long userId, String url);
 
     List<User> getCloudList(List<Long> list);
+
+    List<User> findMyFocusUsers(Long userId);
+
+    List<User> findUserBySearchStr(String searchStr);
 }

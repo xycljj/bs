@@ -11,4 +11,6 @@ public interface UserMapper extends BaseMapper<User> {
     List<User> findUserList(@Param("username") String username, @Param("phone") String phone);
 
     List<User> selectCloudList(@Param("list") List<Long> list);
+
+    List<User> selectMyFocusUsers(@Param("userId") Long userId);
 }

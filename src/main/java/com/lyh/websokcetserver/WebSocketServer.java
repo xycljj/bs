@@ -9,6 +9,7 @@ import com.lyh.dao.UserMapper;
 import com.lyh.entity.MsgInfo;
 import com.lyh.entity.SessionList;
 import com.lyh.entity.User;
+import com.lyh.entity.vo.MsgInfoVo;
 import com.lyh.entity.vo.SessionListVo;
 import com.lyh.utils.CurPool;
 import com.lyh.utils.JsonUtils;
@@ -75,12 +76,12 @@ public class WebSocketServer {
         Long userId = Long.parseLong(this.session.getRequestParameterMap().get("userId").get(0));
         CurPool.sessionPool.remove(userId);
         CurPool.webSockets.remove(userId);
-        if (userMapper == null){
-            this.userMapper = (UserMapper)SpringContextUtil.getBean("userMapper");
+        if (userMapper == null) {
+            this.userMapper = (UserMapper) SpringContextUtil.getBean("userMapper");
         }
         User user = userMapper.selectByPrimaryKey(userId);
         CurPool.curUserPool.remove(user.getId());
-       log.info("【websocket消息】连接断开，总数为:"+CurPool.webSockets.size());
+        log.info("【websocket消息】连接断开，总数为:" + CurPool.webSockets.size());
     }
 
 
@@ -105,7 +106,9 @@ public class WebSocketServer {
             this.msgInfoMapper = (MsgInfoMapper) SpringContextUtil.getBean("msgInfoMapper");
         }
         SessionList sessionList = sessionListMapper.selectByPrimaryKey(Long.parseLong(sessionId));
+        // 为了获取username
         User user = userMapper.selectByPrimaryKey(sessionList.getUserId());
+        // 封装消息
         MsgInfo msgInfo = new MsgInfo();
         msgInfo.setContent(message);
         msgInfo.setCreateTime(new Date());
@@ -116,18 +119,38 @@ public class WebSocketServer {
         msgInfo.setUnReadFlag(0);
         // 消息持久化
         msgInfoMapper.insertSelective(msgInfo);
+
+        MsgInfoVo msgInfoVo = new MsgInfoVo();
+        msgInfoVo.setContent(message);
+        msgInfoVo.setCreateTime(new Date());
+        msgInfoVo.setFromUserId(sessionList.getUserId());
+        msgInfoVo.setFromUsername(user.getUsername());
+        msgInfoVo.setToUserId(sessionList.getToUserId());
+        msgInfoVo.setToUsername(sessionList.getListName());
+        msgInfoVo.setFromAvatar(userMapper.selectByPrimaryKey(sessionList.getUserId()).getAvatar());
+        msgInfoVo.setToAvatar(userMapper.selectByPrimaryKey(sessionList.getToUserId()).getAvatar());
+
+
         // 判断用户是否存在，不存在就结束
         List<Object> list = CurPool.sessionPool.get(sessionList.getToUserId());
+        // 获得未读信息数量
+        Integer count = sessionListMapper.countUnReadMsg(sessionList.getToUserId(), sessionList.getUserId());
         if (list == null || list.isEmpty()) {
-            // 用户不存在，更新未读数
-            sessionListMapper.addUnReadCount(sessionList.getToUserId(), sessionList.getUserId());
+            // 用户未有会话记录，更新未读数
+            sessionListMapper.addUnReadCount(sessionList.getToUserId(), sessionList.getUserId(), count);
         } else {
-            // 用户存在，判断会话是否存在
+            // 发送者和接收者的会话都存在
+            // 接收者会话id
             String id = sessionListMapper.selectIdByUser(sessionList.getToUserId(), sessionList.getUserId()) + "";
+            // list表示当前在线并连接着的接收者sessionId和session集合
             String o = list.get(0) + "";
             if (id.equals(o)) {
-                // 会话存在直接发送消息
-                sendTextMessage(sessionList.getToUserId(), JsonUtils.objectToJson(msgInfo));
+                // 双方通信建立,直接发消息并返回即可
+                sendTextMessage(sessionList.getToUserId(), JsonUtils.objectToJson(msgInfoVo));
+                // 双方都在该界面的时候默认已读
+                msgInfoMapper.msgRead(sessionList.getToUserId(), sessionList.getUserId());
+                log.info("【websocket消息】s收到客户端消息:" + msgInfo.getFromUsername() + " : " + message);
+                return;
             } else {
                 // 判断会话列表是否存在
                 if (id == null || "".equals(id) || "null".equals(id)) {
@@ -140,28 +163,27 @@ public class WebSocketServer {
                     sessionListMapper.insert(tmpSessionList);
                 } else {
                     // 更新未读消息数量
-                    sessionListMapper.addUnReadCount(sessionList.getToUserId(), sessionList.getUserId());
+                    sessionListMapper.addUnReadCount(sessionList.getToUserId(), sessionList.getUserId(), count);
                 }
                 // 会话不存在发送列表消息
                 List<SessionListVo> sessionLists = sessionListMapper.selectByUserId(sessionList.getToUserId());
                 sendTextMessage(sessionList.getToUserId(), JsonUtils.objectToJson(sessionLists));
             }
+            sessionListMapper.addUnReadCount(sessionList.getToUserId(), sessionList.getUserId(), count);
         }
         log.info("【websocket消息】s收到客户端消息:" + message);
     }
 
 
-
-
     /**
-    * @return
-    * @Author lyh
-    * @Description 发送消息
-    * @Param
-    * @Date 2022/4/21
-    **/
+     * @return
+     * @Author lyh
+     * @Description 发送消息
+     * @Param
+     * @Date 2022/4/21
+     **/
     public void sendTextMessage(Long userId, String message) {
-        Session session = (Session)CurPool.sessionPool.get(userId).get(1);
+        Session session = (Session) CurPool.sessionPool.get(userId).get(1);
         if (session != null) {
             try {
                 session.getBasicRemote().sendText(message);

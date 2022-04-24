@@ -13,7 +13,7 @@
     </sql>
     
     <update id="addUnReadCount">
-        update session_list set un_read_count = un_read_count + 1
+        update session_list set un_read_count = #{count}
         where user_id = #{userId}
             and to_user_id = #{toUserId}
     </update>
@@ -43,4 +43,8 @@
         WHERE
             user_id = #{id}
     </select>
+    <select id="countUnReadMsg" resultType="java.lang.Integer">
+        select count(un_read_flag) from msg_info where from_user_id = #{userId} and to_user_id = #{toUserId} and un_read_flag = 0
+    </select>
+
 </mapper>

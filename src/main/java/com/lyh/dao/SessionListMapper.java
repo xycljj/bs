@@ -10,7 +10,7 @@ import java.util.List;
 public interface SessionListMapper extends BaseMapper<SessionList> {
 
 
-    void addUnReadCount(@Param("userId") Long userId, @Param("toUserId") Long toUserId);
+    void addUnReadCount(@Param("userId") Long userId, @Param("toUserId") Long toUserId, @Param("count") Integer count);
 
     void delUnReadCount(@Param("fromUserId") Long fromUserId,@Param("toUserId") Long toUserId);
 
@@ -19,4 +19,7 @@ public interface SessionListMapper extends BaseMapper<SessionList> {
     List<SessionListVo> selectByUserId(@Param("id") Long id);
 
     List<Long> selectUserIdByUserId(@Param("id") Long id);
+
+    Integer countUnReadMsg(@Param("toUserId") Long toUserId,@Param("userId") Long userId);
+
 }

@@ -2,6 +2,7 @@ package com.lyh.dao;
 
 import com.lyh.BaseMapper;
 import com.lyh.entity.Article;
+import com.lyh.entity.vo.ArticleVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

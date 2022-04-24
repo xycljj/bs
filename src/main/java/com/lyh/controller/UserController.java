@@ -4,14 +4,13 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
+import com.lyh.dao.SessionListMapper;
 import com.lyh.entity.Admin;
 import com.lyh.entity.User;
 import com.lyh.entity.UserFocus;
+import com.lyh.entity.vo.ArticleVo;
 import com.lyh.entity.vo.UserVo;
-import com.lyh.service.AdministratorOperationInformationService;
-import com.lyh.service.ArticleService;
-import com.lyh.service.UserFocusService;
-import com.lyh.service.UserService;
+import com.lyh.service.*;
 import com.lyh.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author lyh
@@ -46,6 +47,12 @@ public class UserController {
     @Resource
     private AdministratorOperationInformationService administratorOperationInformationService;
 
+    @Resource
+    private SessionListService sessionListService;
+
+    @Resource
+    private RedisUtil redisUtil;
+
     /**
      * @return
      * @Author lyh
@@ -56,14 +63,18 @@ public class UserController {
     @PostMapping("login")
     public Result<UserVo> login(@RequestBody User user) {
         User user1 = userService.login(user);
+        if (redisUtil.sHasKey("userLoginList", user1.getId())) {
+            return ResultUtil.fail("用户已经在别处登录");
+        }
         if (user1 != null) {
             UserVo userVo = new UserVo();
             String token = TokenUtils.token(user1.getId());
             userVo.setUser(user1);
             userVo.setToken(token);
-            log.info("用户 "+ user1.getUsername() +" 登录成功");
+            redisUtil.sAdd("userLoginList", user1.getId());
+            log.info("用户 " + user1.getUsername() + " 登录成功");
             CurPool.curUserPool.put(user1.getId(), user1);
-            log.info("【websocket消息】连接建立，总数为:"+CurPool.webSockets.size());
+            log.info("【websocket消息】连接建立，总数为:" + CurPool.webSockets.size());
             return ResultUtil.ok(userVo);
         }
         return ResultUtil.fail("用户名密码错误");
@@ -96,7 +107,7 @@ public class UserController {
     public Result<Boolean> delUser(Long id, Long adminId) {
         if (userService.delUser(id) == 1) {
             //如果删除成功,则添加删除的记录
-            administratorOperationInformationService.addRecord(id,adminId);
+            administratorOperationInformationService.addRecord(id, adminId);
             return ResultUtil.ok(true);
         }
         return ResultUtil.fail("删除失败");
@@ -110,8 +121,8 @@ public class UserController {
      * @Date 2021/12/17
      **/
     @PostMapping("edit")
-    public Result<User> editUser(@RequestBody User user,HttpSession session) {
-        Admin admin = (Admin)session.getAttribute("admin");
+    public Result<User> editUser(@RequestBody User user, HttpSession session) {
+        Admin admin = (Admin) session.getAttribute("admin");
         User userInfo = userService.editUser(user, admin);
         return ResultUtil.ok(userInfo);
     }
@@ -177,7 +188,9 @@ public class UserController {
     public Result<UserVo> userInfo(String token) {
         UserVo userVo = new UserVo();
         userVo.setIsTrue(TokenUtils.verify(token));
+        Long idFromToken = TokenUtils.getIdFromToken(token);
         if (!userVo.getIsTrue()) {
+            redisUtil.srem("userLoginList", idFromToken);
             return ResultUtil.fail("离开页面太久，登录已失效....");
         }
         Long uid = TokenUtils.getIdFromToken(token);
@@ -198,8 +211,9 @@ public class UserController {
         CurPool.curUserPool.remove(userId);
         CurPool.webSockets.remove(userId);
         CurPool.sessionPool.remove(userId);
-        log.info("【websocket消息】连接断开，总数为:"+CurPool.webSockets.size());
+        log.info("【websocket消息】连接断开，总数为:" + CurPool.webSockets.size());
         log.info("用户退出登录");
+        redisUtil.srem("userLoginList", userId);
         return ResultUtil.ok("退出登录");
     }
 
@@ -211,67 +225,109 @@ public class UserController {
      * @Date 2022/4/5
      **/
     @PostMapping("avator")
-    public Result<Boolean> uploadFile(@RequestParam("file") MultipartFile file,Long userId) {
+    public Result<Boolean> uploadFile(@RequestParam("file") MultipartFile file, Long userId) {
         String url = null;
         try {
             url = UploadUtils.uploadFile(file);
-            userService.changeUserInfo(userId,url);
+            userService.changeUserInfo(userId, url);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return ResultUtil.ok("上传成功",true);
+        return ResultUtil.ok("上传成功", true);
     }
 
     /**
-    * @return
-    * @Author lyh
-    * @Description 获取该作者的所有文章总数
-    * @Param  id 作者id
-    * @Date 2022/4/14
-    **/
+     * @return
+     * @Author lyh
+     * @Description 获取该作者的所有文章总数
+     * @Param id 作者id
+     * @Date 2022/4/14
+     **/
     @GetMapping("countAuthorsArticles")
-    public Result<Integer> countAuthorsArticles(Long id){
+    public Result<Integer> countAuthorsArticles(Long id) {
         Integer count = articleService.countAuthorsArticles(id);
         return ResultUtil.ok(count);
     }
 
     /**
-    * @return
-    * @Author lyh
-    * @Description 添加关注
-    * @Param
-    * @Date 2022/4/14
-    **/
+     * @return
+     * @Author lyh
+     * @Description 添加关注
+     * @Param
+     * @Date 2022/4/14
+     **/
     @PostMapping("focus")
-    public Result<Boolean> focus(@RequestBody UserFocus userFocus){
+    public Result<Boolean> focus(@RequestBody UserFocus userFocus) {
         boolean flag = userFocusService.focus(userFocus);
         return ResultUtil.ok(flag);
     }
 
     /**
-    * @return
-    * @Author lyh
-    * @Description 取消关注
-    * @Param
-    * @Date 2022/4/15
-    **/
+     * @return
+     * @Author lyh
+     * @Description 取消关注
+     * @Param
+     * @Date 2022/4/15
+     **/
     @PostMapping("cancelFocus")
-    public Result<Boolean> cancelFocus(@RequestBody UserFocus userFocus){
+    public Result<Boolean> cancelFocus(@RequestBody UserFocus userFocus) {
         boolean flag = userFocusService.cancelFocus(userFocus);
         return ResultUtil.ok(!flag);
     }
 
     /**
-    * @return
-    * @Author lyh
-    * @Description 是否关注
-    * @Param
-    * @Date 2022/4/15
-    **/
+     * @return
+     * @Author lyh
+     * @Description 是否关注
+     * @Param
+     * @Date 2022/4/15
+     **/
     @PostMapping("isFocused")
-    public Result<Boolean> isFocused(@RequestBody UserFocus userFocus){
+    public Result<Boolean> isFocused(@RequestBody UserFocus userFocus) {
         boolean flag = userFocusService.isFocused(userFocus);
         return ResultUtil.ok(flag);
     }
 
+    /**
+     * @return
+     * @Author lyh
+     * @Description 查询我的关注列表
+     * @Param
+     * @Date 2022/4/22
+     **/
+    @GetMapping("myFocusUsers")
+    public Result<List<User>> findMyFocusUsers(Long userId) {
+        List<User> list = userService.findMyFocusUsers(userId);
+        return ResultUtil.ok(list);
+    }
+
+    /**
+     * @return
+     * @Author lyh
+     * @Description 未读消息
+     * @Param
+     * @Date 2022/4/24
+     **/
+    @GetMapping("unReadCount")
+    public Result<Integer> countUnReadMsg(Long userId) {
+        Integer count = sessionListService.findUnReadMsgCountByUserId(userId);
+        return ResultUtil.ok(count);
+    }
+
+    @GetMapping("myCollections")
+    public Result<List<ArticleVo>> getMyCollections(Long userId) {
+        //获取所有该用户关注的文章id
+        Set<Object> articleIds = redisUtil.sGet("ac" + userId);
+        StringBuffer sb = new StringBuffer();
+        List<ArticleVo> list = null;
+        for (Object obj : articleIds) {
+            sb.append(Long.parseLong(String.valueOf(obj)));
+            sb.append(",");
+        }
+        if(sb.length() > 0){
+            sb.delete(sb.length()-1,sb.length());
+            list = articleService.findArticleByIds(sb.toString());
+        }
+        return ResultUtil.ok(list);
+    }
 }

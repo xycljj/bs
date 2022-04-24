@@ -146,7 +146,7 @@ public class ArticleController {
     /**
     * @return
     * @Author lyh
-    * @Description 上传封面
+    * @Description 上传图片(封面/内容图片)
     * @Param
     * @Date 2022/4/19
     **/
@@ -190,10 +190,10 @@ public class ArticleController {
     * @Date 2022/4/12
     **/
     @GetMapping("myArticles")
-    public Result<List<Article>> getArticleByUserId(Long userId, @RequestParam(defaultValue = "1") Integer pageIndex,
+    public Result<List<ArticleVo>> getArticleByUserId(Long userId, @RequestParam(defaultValue = "1") Integer pageIndex,
                                                     @RequestParam(defaultValue = "10") Integer pageSize){
         PageHelper.startPage(pageIndex,pageSize);
-        List<Article> articleList = articleService.getArticlesByUserId(userId);
+        List<ArticleVo> articleList = articleService.getArticlesByUserId(userId);
         return ResultUtil.ok(articleList);
     }
 
@@ -218,10 +218,10 @@ public class ArticleController {
     * @Date 2022/4/13
     **/
     @GetMapping("getArticleByTypeId")
-    public Result<List<Article>> getArticleByTypeId(Long id, @RequestParam(defaultValue = "1") Integer pageIndex,
+    public Result<List<ArticleVo>> getArticleByTypeId(Long id, @RequestParam(defaultValue = "1") Integer pageIndex,
                                                      @RequestParam(defaultValue = "6") Integer pageSize){
 //        PageHelper.startPage(pageIndex,pageSize);
-        List<Article> list = articleService.getArticleByTypeId(id);
+        List<ArticleVo> list = articleService.getArticleByTypeId(id);
         return ResultUtil.ok(list);
     }
 
@@ -278,4 +278,57 @@ public class ArticleController {
         return ResultUtil.ok(l);
     }
 
+    /**
+    * @return
+    * @Author lyh
+    * @Description 收藏文章
+    * @Param
+    * @Date 2022/4/24
+    **/
+    @GetMapping("collection")
+    public Result<Boolean> collection(Long userId, Long articleId){
+        redisUtil.sAdd("ac"+userId,articleId);
+        redisUtil.incr("collection:post:count"+articleId,1);
+        return ResultUtil.ok(true);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 取消收藏文章
+    * @Param
+    * @Date 2022/4/24
+    **/
+    @GetMapping("cancelCollection")
+    public Result<Boolean> cancelCollection(Long userId, Long articleId){
+        redisUtil.srem("ac"+userId,articleId);
+        redisUtil.decr("collection:post:count"+articleId,1);
+        return ResultUtil.ok(true);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 用户是否已经收藏
+    * @Param
+    * @Date 2022/4/24
+    **/
+    @GetMapping("isUserCollected")
+    public Result<Boolean> isUserCollected(Long userId, Long articleId){
+        boolean isCollected = redisUtil.sHasKey("ac" + userId, articleId);
+        return ResultUtil.ok(isCollected);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 增加阅读量
+    * @Param
+    * @Date 2022/4/24
+    **/
+    @GetMapping("increReadCount")
+    public Result<Boolean> increaseReadCount(Long articleId){
+        redisUtil.incr("post:read:count"+articleId,1);
+        return ResultUtil.ok(true);
+    }
 }

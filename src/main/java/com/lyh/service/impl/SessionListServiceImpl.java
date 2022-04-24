@@ -60,4 +60,16 @@ public class SessionListServiceImpl implements SessionListService {
     public void delUnReadCount(Long fromUserId, Long toUserId) {
         sessionListMapper.delUnReadCount(fromUserId, toUserId);
     }
+
+    @Override
+    public Integer findUnReadMsgCountByUserId(Long userId) {
+        Example example = new Example(SessionList.class);
+        example.createCriteria().andEqualTo("toUserId",userId);
+        List<SessionList> sessionLists = sessionListMapper.selectByExample(example);
+        Integer count = 0;
+        for(SessionList sessionList : sessionLists){
+            count += sessionList.getUnReadCount();
+        }
+        return count;
+    }
 }
