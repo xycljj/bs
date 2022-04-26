@@ -1,5 +1,6 @@
 package com.lyh.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.lyh.dao.ArticleMapper;
 import com.lyh.dao.ArticleTypeMapper;
 import com.lyh.dao.UserMapper;
@@ -108,6 +109,9 @@ public class ArticleServiceImpl implements ArticleService {
             } else {
                 articleVo.setCollectionCount(Long.parseLong(String.valueOf(o)));
             }
+            //文章类型名称
+            List<ArticleType> articleTypes = articleTypeMapper.selectByIds(article.getArticleTypeId());
+            articleVo.setType(articleTypes);
             articleVo.setUsername(userMapper.selectByPrimaryKey(article.getUserId()).getUsername());
             articleVoList.add(articleVo);
         }
@@ -188,6 +192,9 @@ public class ArticleServiceImpl implements ArticleService {
             } else {
                 articleVo.setCollectionCount(Long.parseLong(String.valueOf(o)));
             }
+            //文章类型名称
+            List<ArticleType> articleTypes = articleTypeMapper.selectByIds(article.getArticleTypeId());
+            articleVo.setType(articleTypes);
             articleVo.setUsername(userMapper.selectByPrimaryKey(article.getUserId()).getUsername());
             list.add(articleVo);
         }

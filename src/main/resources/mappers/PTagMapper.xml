@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyh.dao.PTagMapper">
+  <resultMap id="BaseResultMap" type="com.lyh.entity.PTag">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `name`, is_del
+  </sql>
+  <select id="selectTag1ListByTagName" resultType="com.lyh.entity.PTag">
+    select
+        <include refid="Base_Column_List" />
+    from
+        p_tag
+    where
+        is_del = 0
+        <if test="tagName != null">
+          and `name` like concat("%",#{tagName},"%")
+        </if>
+  </select>
+</mapper>

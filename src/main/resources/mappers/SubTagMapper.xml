@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyh.dao.SubTagMapper">
+  <resultMap id="BaseResultMap" type="com.lyh.entity.SubTag">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="ptag_id" jdbcType="BIGINT" property="ptagId" />
+  </resultMap>
+
+</mapper>

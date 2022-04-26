@@ -64,7 +64,7 @@ public class SessionListServiceImpl implements SessionListService {
     @Override
     public Integer findUnReadMsgCountByUserId(Long userId) {
         Example example = new Example(SessionList.class);
-        example.createCriteria().andEqualTo("toUserId",userId);
+        example.createCriteria().andEqualTo("userId",userId);
         List<SessionList> sessionLists = sessionListMapper.selectByExample(example);
         Integer count = 0;
         for(SessionList sessionList : sessionLists){
