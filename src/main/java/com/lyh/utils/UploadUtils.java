@@ -13,6 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -60,14 +63,32 @@ public class UploadUtils {
         //Ky表示文件上传到服务器中的名称，为空的话默认为文件Hash值
         String key = filePath.substring(0, filePath.lastIndexOf(".")) + System.currentTimeMillis() + filePath.substring(filePath.lastIndexOf("."));
         String upToken = auth.uploadToken(bucketName);
+        String resKey = "";
         try {
             Response response = uploadManager.put(fileBytes, key, upToken);
             DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
             /*System.out.println(putRet.hash);
             System.out.println(putRet.key);*/
+            resKey = URLEncoder.encode(putRet.key,"utf-8");
         } catch (QiniuException e) {
             e.printStackTrace();
         }
-        return "http://r9wh5l95k.hd-bkt.clouddn.com/"+ key;
+        return "http://r9wh5l95k.hd-bkt.clouddn.com/"+ resKey;
+    }
+
+    public static List<String> uploadConsultantQualification(MultipartFile[] files) throws IOException {
+        List<String> list = new ArrayList<>();
+        if(files != null && files.length > 0){
+            /*for(MultipartFile file : files){
+                String url = uploadFile(file);
+                list.add(url);
+            }*/
+            for(int i = 0 ; i < files.length ; i++){
+                MultipartFile file = files[i];
+                String url = uploadFile(file);
+                list.add(url);
+            }
+        }
+        return list;
     }
 }

@@ -8,12 +8,13 @@
         <result column="parent_comment_id" jdbcType="BIGINT" property="parentCommentId"/>
         <result column="root_comment_id" jdbcType="BIGINT" property="rootCommentId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_del" jdbcType="INTEGER" property="isDel"/>
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.lyh.entity.Comment">
         <result column="content" jdbcType="LONGVARCHAR" property="content"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, user_id, article_id, parent_comment_id, root_comment_id, create_time
+    id, user_id, article_id, parent_comment_id, root_comment_id, create_time, is_del
   </sql>
     <sql id="Blob_Column_List">
     content
@@ -25,7 +26,8 @@
         from
         comment
         where
-        article_id = #{articleId}
+        is_del = 0
+        and article_id = #{articleId}
         and parent_comment_id is null
         and root_comment_id is null
         order by create_time desc
@@ -37,7 +39,8 @@
         from
         comment
         where
-        article_id = #{articleId}
+        is_del = 0
+        and article_id = #{articleId}
         and parent_comment_id is not null
         and root_comment_id = #{rootCommentId}
         order by create_time

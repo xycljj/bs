@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
 import com.lyh.dao.SessionListMapper;
 import com.lyh.entity.Admin;
+import com.lyh.entity.Application;
 import com.lyh.entity.User;
 import com.lyh.entity.UserFocus;
 import com.lyh.entity.vo.ArticleVo;
@@ -53,6 +54,12 @@ public class UserController {
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private ApplicationFileService applicationFileService;
+
+    @Resource
+    private ApplicationService applicationService;
+
     /**
      * @return
      * @Author lyh
@@ -65,20 +72,20 @@ public class UserController {
         User user1 = userService.login(user);
         if (redisUtil.sHasKey("userLoginList", user1.getId())) {
             return ResultUtil.fail("用户已经在别处登录");
+        } else {
+            if (user1 != null) {
+                UserVo userVo = new UserVo();
+                String token = TokenUtils.token(user1.getId());
+                userVo.setUser(user1);
+                userVo.setToken(token);
+                redisUtil.sAdd("userLoginList", user1.getId());
+                log.info("用户 " + user1.getUsername() + " 登录成功");
+                CurPool.curUserPool.put(user1.getId(), user1);
+                log.info("【websocket消息】连接建立，总数为:" + CurPool.webSockets.size());
+                return ResultUtil.ok(userVo);
+            }
+            return ResultUtil.fail("用户名密码错误");
         }
-        if (user1 != null) {
-            UserVo userVo = new UserVo();
-            String token = TokenUtils.token(user1.getId());
-            userVo.setUser(user1);
-            userVo.setToken(token);
-            redisUtil.sAdd("userLoginList", user1.getId());
-            log.info("用户 " + user1.getUsername() + " 登录成功");
-            CurPool.curUserPool.put(user1.getId(), user1);
-            log.info("【websocket消息】连接建立，总数为:" + CurPool.webSockets.size());
-            return ResultUtil.ok(userVo);
-        }
-        return ResultUtil.fail("用户名密码错误");
-
     }
 
     /**
@@ -314,6 +321,13 @@ public class UserController {
         return ResultUtil.ok(count);
     }
 
+    /**
+     * @return
+     * @Author lyh
+     * @Description 我的收藏
+     * @Param
+     * @Date 2022/4/30
+     **/
     @GetMapping("myCollections")
     public Result<List<ArticleVo>> getMyCollections(Long userId) {
         //获取所有该用户关注的文章id
@@ -324,10 +338,39 @@ public class UserController {
             sb.append(Long.parseLong(String.valueOf(obj)));
             sb.append(",");
         }
-        if(sb.length() > 0){
-            sb.delete(sb.length()-1,sb.length());
+        if (sb.length() > 0) {
+            sb.delete(sb.length() - 1, sb.length());
             list = articleService.findArticleByIds(sb.toString());
         }
         return ResultUtil.ok(list);
+    }
+
+    /**
+     * @return
+     * @Author lyh
+     * @Description 上传成为咨询师的资质文件
+     * @Param
+     * @Date 2022/4/30
+     **/
+    @PostMapping("toBeConsultant")
+    public Result<Boolean> uploadQualification(@RequestParam("file") MultipartFile[] files, @RequestParam("userId") Long userId) {
+        try {
+            List<String> urlList = UploadUtils.uploadConsultantQualification(files);
+            if (urlList.size() > 0) {
+                StringBuffer sb = new StringBuffer();
+                for (String url : urlList) {
+                    Long id = applicationFileService.addFileUrl(url);
+                    sb.append(id);
+                    sb.append(",");
+                }
+                if(sb.toString().endsWith(",")){
+                    sb = sb.delete(sb.length()-1,sb.length());
+                }
+                applicationService.addApplication(sb.toString(),userId);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.ok("上传成功", true);
     }
 }

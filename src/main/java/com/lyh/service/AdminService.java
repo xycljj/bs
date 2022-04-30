@@ -10,6 +10,7 @@ import java.util.List;
  * @createTime 2021/12/17 10:37:00
  */
 public interface AdminService {
+
     int addAdmin(Admin admin);
 
     List<Admin> findAdminList(String searchStr);

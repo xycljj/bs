@@ -35,7 +35,6 @@ import java.util.Map;
  * @createTime 2021/12/17 10:39:00
  */
 @RestController
-@CrossOrigin
 @Slf4j
 @RequestMapping("admin")
 public class AdminController {

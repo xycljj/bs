@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyh.dao.ApplicationMapper">
+  <resultMap id="BaseResultMap" type="com.lyh.entity.Application">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="url_ids" jdbcType="VARCHAR" property="urlIds" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_pass" jdbcType="INTEGER" property="isPass" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, url_ids, create_time, is_pass
+  </sql>
+  <select id="selectAuditList" resultType="com.lyh.entity.vo.ApplicationVo">
+    select
+        a.id as id,
+        a.user_id as userId,
+        a.url_ids as urlIds,
+        a.create_time as createTime,
+        a.is_pass as isPass,
+        u.username as username
+    from
+        application a left join `user` u on a.user_id = u.id
+    where
+        u.is_del = 0 and a.is_pass = 0
+        <if test="username != null">
+          and u.username like concat("%",#{username},"%")
+        </if>
+        <if test="startTime != null and endTime != null">
+          and a.create_time &gt; #{startTime}
+          and a.create_time &lt; #{endTime}
+        </if>
+    order by a.create_time desc
+  </select>
+
+    <select id="selecApprovList" resultType="com.lyh.entity.vo.ApplicationVo">
+        select
+        a.id as id,
+        a.user_id as userId,
+        a.url_ids as urlIds,
+        a.create_time as createTime,
+        a.is_pass as isPass,
+        u.username as username
+        from
+        application a left join `user` u on a.user_id = u.id
+        where
+        u.is_del = 0 and a.is_pass in (1, 2)
+        <if test="username != null and username != ''">
+            and u.username like concat("%",#{username},"%")
+        </if>
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+        <if test="startTime != null and endTime != null and startTime != '' and endTime != ''">
+            and a.create_time &gt; #{startTime}
+            and a.create_time &lt; #{endTime}
+        </if>
+        order by a.create_time desc
+    </select>
+</mapper>

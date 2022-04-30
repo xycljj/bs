@@ -220,7 +220,7 @@ public class ArticleController {
     @GetMapping("getArticleByTypeId")
     public Result<List<ArticleVo>> getArticleByTypeId(Long id, @RequestParam(defaultValue = "1") Integer pageIndex,
                                                      @RequestParam(defaultValue = "6") Integer pageSize){
-        PageHelper.startPage(pageIndex,pageSize);
+//        PageHelper.startPage(pageIndex,pageSize);
         List<ArticleVo> list = articleService.getArticleByTypeId(id);
         return ResultUtil.ok(list);
     }

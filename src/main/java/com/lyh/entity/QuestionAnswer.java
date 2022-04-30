@@ -7,11 +7,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * comment
+ * question_reply
  * @author 
  */
 @Data
-public class Comment implements Serializable {
+public class QuestionAnswer implements Serializable {
     /**
      * 主键id
      */
@@ -19,24 +19,14 @@ public class Comment implements Serializable {
     private Long id;
 
     /**
-     * 用户id
+     * 评论用户id
      */
-    private Long userId;
+    private Long fromUserId;
 
     /**
-     * 文章id
+     * 问题id
      */
-    private Long articleId;
-
-    /**
-     * 父评论id
-     */
-    private Long parentCommentId;
-
-    /**
-     * 根评论id
-     */
-    private Long rootCommentId;
+    private Long questionId;
 
     /**
      * 创建时间
@@ -48,12 +38,6 @@ public class Comment implements Serializable {
      */
     private String content;
 
-    /**
-     * 软删除(0未删除1已删除)
-     */
-    private Integer isDel;
-
     private static final long serialVersionUID = 1L;
-
 
 }

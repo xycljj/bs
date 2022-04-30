@@ -117,4 +117,5 @@ public class UserServiceImpl implements UserService {
         example.createCriteria().orLike("username",searchStr);
         return userMapper.selectByExample(example);
     }
+
 }

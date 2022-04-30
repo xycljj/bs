@@ -30,12 +30,48 @@ public class QuestionVo {
     private Integer answerCount;
 
     /**
-     * 觉得有用
+     * 觉得有用(总数)
      */
-    private Integer usefulCount;
+    private Long usefulCount;
+
+    /**
+     * 阅读量
+     */
+    private Long readCount;
 
     /**
      * 用户头像(回答者)
      */
     private String avatar;
+
+    /**
+     * 用户头像(提问者)
+     */
+    private String questionerAvatar;
+
+    /**
+     * 是否给了抱抱
+     */
+    private Boolean isHug;
+
+    /**
+     * 抱抱数
+     */
+    private Long hug;
+
+    /**
+     * 是否被收藏
+     */
+    private Boolean isCollected;
+
+    /**
+     * 收藏数
+     */
+    private Long collected;
+
+    /**
+     * 记录当前问答回答有用数最多的回答
+     */
+    private QaVo qaVo;
+
 }

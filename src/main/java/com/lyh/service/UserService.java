@@ -35,4 +35,5 @@ public interface UserService {
     List<User> findMyFocusUsers(Long userId);
 
     List<User> findUserBySearchStr(String searchStr);
+
 }

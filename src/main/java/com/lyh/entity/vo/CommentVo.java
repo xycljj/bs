@@ -54,5 +54,6 @@ public class CommentVo extends Comment {
      * 不自动显示
      */
     private Boolean inputShow = false;
+
     private List<CommentVo> reply;
 }

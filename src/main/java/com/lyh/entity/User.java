@@ -79,5 +79,15 @@ public class User implements Serializable {
      */
     private Date birthday;
 
+    /**
+     * 是否是咨询师
+     */
+    private Integer isConsultant;
+
+    /**
+     * 咨询师证明 文件地址
+     */
+    private String consultantUrl;
+
     private static final long serialVersionUID = 1L;
 }
