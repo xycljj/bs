@@ -20,4 +20,52 @@
   <select id="selectIdList" resultType="java.lang.Long">
     select id from question_answer where question_id = #{questionId}
   </select>
+  <select id="selectMyQaList" resultType="com.lyh.entity.vo.MyQa">
+    select
+        q.id as questionId,
+        q.title as questionTitle,
+        qa.id as qaId,
+        qa.from_user_id as userId,
+        qa.content as qaContent,
+        qa.create_time as createTime
+    from
+        question_answer qa left join question q on qa.question_id = q.id
+    where
+        qa.from_user_id = #{userId}
+    order by
+        qa.create_time desc
+
+  </select>
+
+    <select id="selectQuestionAnswerListInBack" resultType="com.lyh.entity.vo.QuestionAnswerVo">
+        select
+        qa.id as id,
+        qa.from_user_id as fromUserId,
+        qa.content as content,
+        qa.create_time as createTime,
+        qa.question_id as questionId,
+        q.title as title,
+        u1.username as username,
+        u2.username as username1
+        from
+        question_answer qa left join question q on qa.question_id = q.id
+        left join `user` u1 on u1.id = qa.from_user_id
+        left join `user` u2 on u2.id = q.user_id
+        where
+        qa.is_del = 0 and q.is_del = 0 and u1.is_del = 0 and u2.is_del = 0
+        <if test="username != null and username != ''">
+            and u1.username like concat("%",#{username},"%")
+        </if>
+        <if test="username1 != null and username1 != ''">
+            and u1.username1 like concat("%",#{username1},"%")
+        </if>
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            and qa.create_time &gt; startTime and  qa.create_time &lt; endTime
+        </if>
+        <if test="title != null and title != ''">
+            and q.title like concat("%",#{title},"%")
+        </if>
+        group by q.title, qa.from_user_id, qa.content, qa.create_time, qa.question_id, qa.id, u1.username, u2.username
+        order by qa.create_time desc
+    </select>
 </mapper>

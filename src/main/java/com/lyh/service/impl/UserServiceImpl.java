@@ -8,6 +8,7 @@ import com.lyh.entity.AdministratorOperationInformation;
 import com.lyh.entity.User;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.UserService;
+import com.lyh.utils.RedisUtil;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -31,6 +32,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private AdminMapper adminMapper;
+
+    @Resource
+    private RedisUtil redisUtil;
 
 
     @Override
@@ -116,6 +120,24 @@ public class UserServiceImpl implements UserService {
         Example example = new Example(User.class);
         example.createCriteria().orLike("username",searchStr);
         return userMapper.selectByExample(example);
+    }
+
+    @Override
+    public Integer collectionCount(Long userId) {
+        Object o = redisUtil.get("user:collection:count" + userId);
+        if(null == o){
+            return 0;
+        }
+        return Integer.parseInt(String.valueOf(o));
+    }
+
+    @Override
+    public Integer getCreditToCount(Long userId) {
+        Object o = redisUtil.get("getCreditTo" + userId);
+        if(null == o){
+            return 0;
+        }
+        return Integer.parseInt(String .valueOf(o));
     }
 
 }

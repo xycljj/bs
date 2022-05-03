@@ -63,4 +63,9 @@ public class QaVo {
      * 楼主反馈数
      */
     private Integer feedBack;
+
+    /**
+     * 帮助了多少人
+     */
+    private Integer helpCount;
 }

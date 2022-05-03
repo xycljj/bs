@@ -36,4 +36,8 @@ public interface UserService {
 
     List<User> findUserBySearchStr(String searchStr);
 
+    Integer collectionCount(Long userId);
+
+    Integer getCreditToCount(Long userId);
+
 }

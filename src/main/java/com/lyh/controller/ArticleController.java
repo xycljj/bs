@@ -115,6 +115,27 @@ public class ArticleController {
         return ResultUtil.fail();
     }
 
+    /**
+    * @return
+    * @Author lyh
+    * @Description 删除文章
+    * @Param
+    * @Date 2022/5/3
+    **/
+    @GetMapping("delArticle")
+    public Result<?> delArticle(Long articleId){
+        boolean flag = articleService.delArticleById(articleId);
+        return ResultUtil.ok(flag);
+    }
+
+
+    /**
+     * @return
+     * @Author lyh
+     * @Description 编辑文章
+     * @Param article 文章
+     * @Date 2022/3/31
+     **/
     @PostMapping("editArticle")
     public Result<Boolean> editArticle(@RequestBody Article article){
         boolean isAdd = articleService.editArticle(article);
@@ -235,6 +256,8 @@ public class ArticleController {
     @GetMapping("doLike")
     public Result<Void> doLike(Long userId, Long articleId){
         redisUtil.sAdd("post:"+ articleId,userId);
+        Long authorId = articleService.findAuthorByArticleId(articleId);
+        redisUtil.incr("getCreditTo"+authorId,1);
         return ResultUtil.ok();
     }
 
@@ -248,6 +271,8 @@ public class ArticleController {
     @GetMapping("doUnLike")
     public Result<Void> doUnLike(Long userId, Long articleId){
         redisUtil.srem("post:"+ articleId,userId);
+        Long authorId = articleService.findAuthorByArticleId(articleId);
+        redisUtil.decr("getCreditTo"+authorId,1);
         return ResultUtil.ok();
     }
 
@@ -289,6 +314,7 @@ public class ArticleController {
     public Result<Boolean> collection(Long userId, Long articleId){
         redisUtil.sAdd("ac"+userId,articleId);
         redisUtil.incr("collection:post:count"+articleId,1);
+        redisUtil.incr("user:collection:count"+userId,1);
         return ResultUtil.ok(true);
     }
 
@@ -303,6 +329,7 @@ public class ArticleController {
     public Result<Boolean> cancelCollection(Long userId, Long articleId){
         redisUtil.srem("ac"+userId,articleId);
         redisUtil.decr("collection:post:count"+articleId,1);
+        redisUtil.decr("user:collection:count"+userId,1);
         return ResultUtil.ok(true);
     }
 

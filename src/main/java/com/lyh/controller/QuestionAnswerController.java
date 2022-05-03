@@ -1,9 +1,12 @@
 package com.lyh.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.lyh.entity.QaReply;
 import com.lyh.entity.QuestionAnswer;
 import com.lyh.entity.vo.QaReplyVo;
 import com.lyh.entity.vo.QaVo;
+import com.lyh.entity.vo.MyQa;
+import com.lyh.entity.vo.QuestionAnswerVo;
 import com.lyh.service.QaReplyService;
 import com.lyh.service.QuestionAnswerService;
 import com.lyh.utils.Result;
@@ -93,12 +96,12 @@ public class QuestionAnswerController {
     }
 
     /**
-    * @return
-    * @Author lyh
-    * @Description 取消关注
-    * @Param
-    * @Date 2022/4/28
-    **/
+     * @return
+     * @Author lyh
+     * @Description 取消关注
+     * @Param
+     * @Date 2022/4/28
+     **/
     @GetMapping("unfocus")
     public Result<Boolean> unfocus(Long answerUserId, Long loginUserId) {
         boolean flag = questionAnswerService.unfocus(answerUserId, loginUserId);
@@ -106,15 +109,51 @@ public class QuestionAnswerController {
     }
 
     /**
-    * @return
-    * @Author lyh
-    * @Description 评论
-    * @Param
-    * @Date 2022/4/29
-    **/
+     * @return
+     * @Author lyh
+     * @Description 评论
+     * @Param
+     * @Date 2022/4/29
+     **/
     @PostMapping("sendComment")
-    public Result<QaReplyVo> sendComment(@RequestBody QaReply qaReply){
+    public Result<QaReplyVo> sendComment(@RequestBody QaReply qaReply) {
         QaReplyVo qaReplyVo = qaReplyService.sendComment(qaReply);
         return ResultUtil.ok(qaReplyVo);
+    }
+
+    @GetMapping("findQaByUserId")
+    public Result<List<MyQa>> findQaListByUserId(Long userId) {
+        List<MyQa> list = questionAnswerService.findQaListByUserId(userId);
+        return ResultUtil.ok(list);
+    }
+
+    /**
+     * @return
+     * @Author lyh
+     * @Description 根据用户id查询用户的回答数
+     * @Param
+     * @Date 2022/5/1
+     **/
+    @GetMapping("userQaCount")
+    public Result<Integer> userQaCount(Long userId) {
+        Integer count = questionAnswerService.countQaByUserId(userId);
+        return ResultUtil.ok(count);
+    }
+
+
+    /**
+     * @return
+     * @Author lyh
+     * @Description 后台管理系统查询问答列表
+     * @Param
+     * @Date 2022/5/3
+     **/
+    @GetMapping("questionAnswerList")
+    public Result<PageInfo<QuestionAnswerVo>> questionAnswerList(String username, String username1, String title,
+                                                                 String startTime, String endTime,
+                                                                 @RequestParam(defaultValue = "1") Integer pageIndex,
+                                                                 @RequestParam(defaultValue = "10") Integer pageSize) {
+        PageInfo<QuestionAnswerVo> pageInfo =  questionAnswerService.findQuestionAnswerListInback(username,username1,title,startTime,endTime,pageIndex, pageSize);
+        return ResultUtil.ok(pageInfo);
     }
 }

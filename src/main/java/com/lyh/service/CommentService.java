@@ -14,4 +14,6 @@ public interface CommentService {
     List<CommentVo> findComments(Long articleId, Long userId);
 
     Comment addComment(Comment comment);
+
+    Long findCommentorById(Long commentId);
 }

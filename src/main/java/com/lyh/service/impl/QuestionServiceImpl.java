@@ -133,15 +133,23 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void collect(Long questionId, Long userId) {
         redisUtil.sAdd("question" + questionId + "collectedList", userId);
+        redisUtil.incr("user:collection:count"+userId,1);
     }
 
     @Override
     public void cancelCollect(Long questionId, Long userId) {
         redisUtil.srem("question" + questionId + "collectedList", userId);
+        redisUtil.decr("user:collection:count"+userId,1);
     }
 
     @Override
     public void addReadCount(Long id) {
         redisUtil.incr("question"+id+"readCount",1);
+    }
+
+    @Override
+    public Integer collectionCountByUserId(Long userId) {
+//        redisUtil.sGetSetSize()
+        return null;
     }
 }

@@ -38,6 +38,8 @@ public class QuestionAnswer implements Serializable {
      */
     private String content;
 
+    private Integer isDel;
+
     private static final long serialVersionUID = 1L;
 
 }

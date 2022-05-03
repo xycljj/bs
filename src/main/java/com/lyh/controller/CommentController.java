@@ -68,19 +68,23 @@ public class CommentController {
     @GetMapping("like")
     public Result<Boolean> like(Long userId, Long articleId, Long commentId) {
         redisUtil.sAdd("post:" + articleId + ":comment:" + commentId + ":likeListId", userId);
+        Long commentorId = commentService.findCommentorById(commentId);
+        redisUtil.incr("getCreditTo"+commentorId,1);
         return ResultUtil.ok(true);
     }
 
     /**
      * @return
      * @Author lyh
-     * @Description 点赞评论
+     * @Description 取消点赞评论
      * @Param
      * @Date 2022/4/18
      **/
     @GetMapping("dislike")
     public Result<Boolean> dislike(Long userId, Long articleId, Long commentId) {
         redisUtil.srem("post:" + articleId + ":comment:" + commentId + ":likeListId", userId);
+        Long commentorId = commentService.findCommentorById(commentId);
+        redisUtil.decr("getCreditTo"+commentorId,1);
         return ResultUtil.ok(true);
     }
 

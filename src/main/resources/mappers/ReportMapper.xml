@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyh.dao.ReportMapper">
+    <resultMap id="BaseResultMap" type="com.lyh.entity.Report">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="item_id" jdbcType="BIGINT" property="itemId"/>
+        <result column="report_type" jdbcType="INTEGER" property="reportType"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="processing_time" jdbcType="TIMESTAMP" property="processingTime"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, item_id, report_type, create_time, processing_time, `type`
+  </sql>
+    <select id="selectList" resultType="com.lyh.entity.vo.ArticleReport">
+        select
+            r.id as id,
+            r.user_id as userId,
+            r.item_id as itemId,
+            r.report_type as reportType,
+            r.create_time as createTime,
+            r.processing_time as processingTime,
+            r.`type` as `type`,
+            a.title as title,
+            u1.username as username,
+            u2.username as username1
+        from
+            report r left join article a on r.item_id = a.id
+            left join `user` u1 on r.user_id = u1.id
+            left join `user` u2 on a.user_id = u2.id
+        where
+        r.report_type = 0
+        <if test="startTime1 != null and startTime1 != '' and endTime1 != null and endTime1 != ''">
+            and r.create_time &gt; #{startTime1} and r.create_time &lt; #{endTime1}
+        </if>
+        <if test="startTime2 != null and startTime2 != '' and endTime2 != null and endTime2 != ''">
+            and r.processing_time &gt; #{startTime2} and r.processing_time &lt; #{endTime2}
+        </if>
+        <if test="username != null and username != ''">
+            and u1.username like concat("%",#{username},"%")
+        </if>
+        <if test="username1 != null and username1 != ''">
+            and u2.username like concat("%",#{username1},"%")
+        </if>
+        order by createTime desc
+    </select>
+
+    <select id="selectArticleCommentList" resultType="com.lyh.entity.vo.ArticleCommentReport">
+        select
+        r.id as id,
+        r.user_id as userId,
+        r.item_id as itemId,
+        r.report_type as reportType,
+        r.create_time as createTime,
+        r.processing_time as processingTime,
+        r.`type` as `type`,
+        c.content as content,
+        u1.username as username,
+        u2.username as username1
+        from
+        report r left join comment c on r.item_id = c.id
+        left join `user` u1 on r.user_id = u1.id
+        left join `user` u2 on c.user_id = u2.id
+        where
+        r.report_type = 1
+        <if test="startTime1 != null and startTime1 != '' and endTime1 != null and endTime1 != ''">
+            and r.create_time &gt; #{startTime1} and r.create_time &lt; #{endTime1}
+        </if>
+        <if test="startTime2 != null and startTime2 != '' and endTime2 != null and endTime2 != ''">
+            and r.processing_time &gt; #{startTime2} and r.processing_time &lt; #{endTime2}
+        </if>
+        <if test="username != null and username != ''">
+            and u1.username like concat("%",#{username},"%")
+        </if>
+        <if test="username1 != null and username1 != ''">
+            and u2.username like concat("%",#{username1},"%")
+        </if>
+        order by createTime desc
+    </select>
+    <select id="selectQuestionContentList" resultType="com.lyh.entity.vo.QuestionContentReport">
+        select
+        r.id as id,
+        r.user_id as userId,
+        r.item_id as itemId,
+        r.report_type as reportType,
+        r.create_time as createTime,
+        r.processing_time as processingTime,
+        r.`type` as `type`,
+        q.title as title,
+        u1.username as username,
+        u2.username as username1
+        from
+        report r left join question q on r.item_id = q.id
+        left join `user` u1 on r.user_id = u1.id
+        left join `user` u2 on q.user_id = u2.id
+        where
+        r.report_type = 2
+        <if test="startTime1 != null and startTime1 != '' and endTime1 != null and endTime1 != ''">
+            and r.create_time &gt; #{startTime1} and r.create_time &lt; #{endTime1}
+        </if>
+        <if test="startTime2 != null and startTime2 != '' and endTime2 != null and endTime2 != ''">
+            and r.processing_time &gt; #{startTime2} and r.processing_time &lt; #{endTime2}
+        </if>
+        <if test="username != null and username != ''">
+            and u1.username like concat("%",#{username},"%")
+        </if>
+        <if test="username1 != null and username1 != ''">
+            and u2.username like concat("%",#{username1},"%")
+        </if>
+        order by createTime desc
+    </select>
+
+    <select id="selectQuestionAnswerList" resultType="com.lyh.entity.vo.QuestionAnswerReport">
+        select
+        r.id as id,
+        r.user_id as userId,
+        r.item_id as itemId,
+        r.report_type as reportType,
+        r.create_time as createTime,
+        r.processing_time as processingTime,
+        r.`type` as `type`,
+        qa.content as content,
+        u1.username as username,
+        u2.username as username1,
+        qa.question_id as qId
+        from
+        report r left join question_answer qa on r.item_id = qa.id
+        left join `user` u1 on r.user_id = u1.id
+        left join `user` u2 on qa.from_user_id = u2.id
+        where
+        r.report_type = 3
+        <if test="startTime1 != null and startTime1 != '' and endTime1 != null and endTime1 != ''">
+            and r.create_time &gt; #{startTime1} and r.create_time &lt; #{endTime1}
+        </if>
+        <if test="startTime2 != null and startTime2 != '' and endTime2 != null and endTime2 != ''">
+            and r.processing_time &gt; #{startTime2} and r.processing_time &lt; #{endTime2}
+        </if>
+        <if test="username != null and username != ''">
+            and u1.username like concat("%",#{username},"%")
+        </if>
+        <if test="username1 != null and username1 != ''">
+            and u2.username like concat("%",#{username1},"%")
+        </if>
+        order by createTime desc
+    </select>
+    <select id="selectQuestionAnswerReplyList" resultType="com.lyh.entity.vo.QuestionAnswerReplyReport">
+        select
+        r.id as id,
+        r.user_id as userId,
+        r.item_id as itemId,
+        r.report_type as reportType,
+        r.create_time as createTime,
+        r.processing_time as processingTime,
+        r.`type` as `type`,
+        qar.content as content,
+        u1.username as username,
+        u2.username as username1
+        from
+        report r left join qa_reply qar on r.item_id = qar.id
+        left join `user` u1 on r.user_id = u1.id
+        left join `user` u2 on qar.user_id = u2.id
+        where
+        r.report_type = 4
+        <if test="startTime1 != null and startTime1 != '' and endTime1 != null and endTime1 != ''">
+            and r.create_time &gt; #{startTime1} and r.create_time &lt; #{endTime1}
+        </if>
+        <if test="startTime2 != null and startTime2 != '' and endTime2 != null and endTime2 != ''">
+            and r.processing_time &gt; #{startTime2} and r.processing_time &lt; #{endTime2}
+        </if>
+        <if test="username != null and username != ''">
+            and u1.username like concat("%",#{username},"%")
+        </if>
+        <if test="username1 != null and username1 != ''">
+            and u2.username like concat("%",#{username1},"%")
+        </if>
+        order by createTime desc
+    </select>
+</mapper>

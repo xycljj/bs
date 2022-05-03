@@ -25,4 +25,6 @@ public interface QuestionService {
     void cancelCollect(Long questionId, Long userId);
 
     void addReadCount(Long id);
+
+    Integer collectionCountByUserId(Long userId);
 }

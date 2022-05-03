@@ -40,4 +40,9 @@ public interface ArticleService {
     List<Article> findArticleBySearchStr(String searchStr);
 
     List<ArticleVo> findArticleByIds(String ids);
+
+    Long findAuthorByArticleId(Long articleId);
+
+    boolean delArticleById(Long articleId);
+
 }

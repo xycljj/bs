@@ -43,6 +43,9 @@ public class UserController {
     private ArticleService articleService;
 
     @Resource
+    private QuestionService questionService;
+
+    @Resource
     private UserFocusService userFocusService;
 
     @Resource
@@ -70,7 +73,7 @@ public class UserController {
     @PostMapping("login")
     public Result<UserVo> login(@RequestBody User user) {
         User user1 = userService.login(user);
-        if (redisUtil.sHasKey("userLoginList", user1.getId())) {
+        if (user1 != null && redisUtil.sHasKey("userLoginList", user1.getId())) {
             return ResultUtil.fail("用户已经在别处登录");
         } else {
             if (user1 != null) {
@@ -333,7 +336,7 @@ public class UserController {
         //获取所有该用户关注的文章id
         Set<Object> articleIds = redisUtil.sGet("ac" + userId);
         StringBuffer sb = new StringBuffer();
-        List<ArticleVo> list = null;
+        List<ArticleVo> list = new ArrayList<>();
         for (Object obj : articleIds) {
             sb.append(Long.parseLong(String.valueOf(obj)));
             sb.append(",");
@@ -363,14 +366,41 @@ public class UserController {
                     sb.append(id);
                     sb.append(",");
                 }
-                if(sb.toString().endsWith(",")){
-                    sb = sb.delete(sb.length()-1,sb.length());
+                if (sb.toString().endsWith(",")) {
+                    sb = sb.delete(sb.length() - 1, sb.length());
                 }
-                applicationService.addApplication(sb.toString(),userId);
+                applicationService.addApplication(sb.toString(), userId);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return ResultUtil.ok("上传成功", true);
     }
+
+    /**
+     * @return
+     * @Author lyh
+     * @Description 所有收藏数量(问答 + 文章)
+     * @Param
+     * @Date 2022/5/1
+     **/
+    @GetMapping("collectionCount")
+    public Result<?> collectionCount(Long userId) {
+        Integer count = userService.collectionCount(userId);
+        return ResultUtil.ok(count);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 获赞(文章,评论,问答是否有用)
+    * @Param
+    * @Date 2022/5/2
+    **/
+    @GetMapping("getCreditToCount")
+    public Result<?> getCreditToCount(Long userId) {
+        Integer count = userService.getCreditToCount(userId);
+        return ResultUtil.ok(count);
+    }
+
 }

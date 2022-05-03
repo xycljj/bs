@@ -84,4 +84,9 @@ public class CommentServiceImpl implements CommentService {
         return comments.get(0);
     }
 
+    @Override
+    public Long findCommentorById(Long commentId) {
+        return commentMapper.selectByPrimaryKey(commentId).getUserId();
+    }
+
 }

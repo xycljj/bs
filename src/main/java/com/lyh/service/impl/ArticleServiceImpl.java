@@ -201,5 +201,17 @@ public class ArticleServiceImpl implements ArticleService {
         return list;
     }
 
+    @Override
+    public Long findAuthorByArticleId(Long articleId) {
+        return articleMapper.selectByPrimaryKey(articleId).getUserId();
+    }
+
+    @Override
+    public boolean delArticleById(Long articleId) {
+        Article article = new Article();
+        article.setId(articleId);
+        article.setIsDel(DelEnum.IS_DEL.getValue());
+        return articleMapper.updateByPrimaryKeySelective(article) == 1;
+    }
 
 }
