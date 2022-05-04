@@ -44,6 +44,19 @@ public class QuestionAnswerController {
     }
 
     /**
+    * @return
+    * @Author lyh
+    * @Description 删除问答
+    * @Param
+    * @Date 2022/5/4
+    **/
+    @GetMapping("delQuestionAnswer")
+    public Result<?> delQuestionAnswer(Long qaId){
+        questionAnswerService.delQuestionAnswer(qaId);
+        return ResultUtil.ok();
+    }
+
+    /**
      * @return
      * @Author lyh
      * @Description 查询所有回答

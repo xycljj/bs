@@ -60,7 +60,7 @@
             and u1.username1 like concat("%",#{username1},"%")
         </if>
         <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-            and qa.create_time &gt; startTime and  qa.create_time &lt; endTime
+            and qa.create_time &gt; #{startTime} and qa.create_time &lt; #{endTime}
         </if>
         <if test="title != null and title != ''">
             and q.title like concat("%",#{title},"%")

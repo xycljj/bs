@@ -42,9 +42,16 @@ public class ReportServiceImpl implements ReportService {
                                                         String startTime1, String endTime1,
                                                         String startTime2, String endTime2,
                                                         Integer pageIndex, Integer pageSize) {
-
+        if (startTime1 != null && endTime1 != null) {
+            startTime1 = startTime1 + " 00:00:00";
+            endTime1 = endTime1 + " 23:59:59";
+        }
+        if (startTime2 != null && endTime2 != null) {
+            startTime2 = startTime2 + " 00:00:00";
+            endTime2 = endTime2 + " 23:59:59";
+        }
         Page<ArticleReport> reportList = PageHelper.startPage(pageIndex, pageSize);
-        List<ArticleReport> reports = reportMapper.selectList(username,_username,startTime1,endTime1,startTime2,endTime2);
+        List<ArticleReport> reports = reportMapper.selectList(username, _username, startTime1, endTime1, startTime2, endTime2);
         PageInfo<ArticleReport> reportPageInfo = reportList.toPageInfo();
         reportPageInfo.setList(reports);
         return reportPageInfo;
@@ -61,8 +68,16 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public PageInfo<ArticleCommentReport> getArticleCommentReportList(String username, String username1, String startTime1, String endTime1, String startTime2, String endTime2, Integer pageIndex, Integer pageSize) {
+        if (startTime1 != null && endTime1 != null) {
+            startTime1 = startTime1 + " 00:00:00";
+            endTime1 = endTime1 + " 23:59:59";
+        }
+        if (startTime2 != null && endTime2 != null) {
+            startTime2 = startTime2 + " 00:00:00";
+            endTime2 = endTime2 + " 23:59:59";
+        }
         Page<ArticleCommentReport> reportList = PageHelper.startPage(pageIndex, pageSize);
-        List<ArticleCommentReport> reports = reportMapper.selectArticleCommentList(username,username1,startTime1,endTime1,startTime2,endTime2);
+        List<ArticleCommentReport> reports = reportMapper.selectArticleCommentList(username, username1, startTime1, endTime1, startTime2, endTime2);
         PageInfo<ArticleCommentReport> reportPageInfo = reportList.toPageInfo();
         reportPageInfo.setList(reports);
         return reportPageInfo;
@@ -70,8 +85,16 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public PageInfo<QuestionContentReport> getQuestionContentReportList(String username, String username1, String startTime1, String endTime1, String startTime2, String endTime2, Integer pageIndex, Integer pageSize) {
+        if (startTime1 != null && endTime1 != null) {
+            startTime1 = startTime1 + " 00:00:00";
+            endTime1 = endTime1 + " 23:59:59";
+        }
+        if (startTime2 != null && endTime2 != null) {
+            startTime2 = startTime2 + " 00:00:00";
+            endTime2 = endTime2 + " 23:59:59";
+        }
         Page<QuestionContentReport> reportList = PageHelper.startPage(pageIndex, pageSize);
-        List<QuestionContentReport> reports = reportMapper.selectQuestionContentList(username,username1,startTime1,endTime1,startTime2,endTime2);
+        List<QuestionContentReport> reports = reportMapper.selectQuestionContentList(username, username1, startTime1, endTime1, startTime2, endTime2);
         PageInfo<QuestionContentReport> reportPageInfo = reportList.toPageInfo();
         reportPageInfo.setList(reports);
         return reportPageInfo;
@@ -79,8 +102,16 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public PageInfo<QuestionAnswerReport> getQuestionAnswerReportList(String username, String username1, String startTime1, String endTime1, String startTime2, String endTime2, Integer pageIndex, Integer pageSize) {
+        if (startTime1 != null && endTime1 != null) {
+            startTime1 = startTime1 + " 00:00:00";
+            endTime1 = endTime1 + " 23:59:59";
+        }
+        if (startTime2 != null && endTime2 != null) {
+            startTime2 = startTime2 + " 00:00:00";
+            endTime2 = endTime2 + " 23:59:59";
+        }
         Page<QuestionAnswerReport> reportList = PageHelper.startPage(pageIndex, pageSize);
-        List<QuestionAnswerReport> reports = reportMapper.selectQuestionAnswerList(username,username1,startTime1,endTime1,startTime2,endTime2);
+        List<QuestionAnswerReport> reports = reportMapper.selectQuestionAnswerList(username, username1, startTime1, endTime1, startTime2, endTime2);
         PageInfo<QuestionAnswerReport> reportPageInfo = reportList.toPageInfo();
         reportPageInfo.setList(reports);
         return reportPageInfo;
@@ -88,8 +119,16 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public PageInfo<QuestionAnswerReplyReport> getQuestionAnswerReplyReportList(String username, String username1, String startTime1, String endTime1, String startTime2, String endTime2, Integer pageIndex, Integer pageSize) {
+        if (startTime1 != null && endTime1 != null) {
+            startTime1 = startTime1 + " 00:00:00";
+            endTime1 = endTime1 + " 23:59:59";
+        }
+        if (startTime2 != null && endTime2 != null) {
+            startTime2 = startTime2 + " 00:00:00";
+            endTime2 = endTime2 + " 23:59:59";
+        }
         Page<QuestionAnswerReplyReport> reportList = PageHelper.startPage(pageIndex, pageSize);
-        List<QuestionAnswerReplyReport> reports = reportMapper.selectQuestionAnswerReplyList(username,username1,startTime1,endTime1,startTime2,endTime2);
+        List<QuestionAnswerReplyReport> reports = reportMapper.selectQuestionAnswerReplyList(username, username1, startTime1, endTime1, startTime2, endTime2);
         PageInfo<QuestionAnswerReplyReport> reportPageInfo = reportList.toPageInfo();
         reportPageInfo.setList(reports);
         return reportPageInfo;

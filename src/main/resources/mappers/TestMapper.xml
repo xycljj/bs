@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyh.dao.TestMapper">
+  <resultMap id="BaseResultMap" type="com.lyh.entity.Test">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="date" jdbcType="TIMESTAMP" property="date" />
+    <result column="item_ids" jdbcType="VARCHAR" property="itemIds" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `name`, `date`, item_ids, is_del, cover
+  </sql>
+  <select id="selectTestListByName" resultType="com.lyh.entity.Test">
+    select
+        <include refid="Base_Column_List"></include>
+    from
+        test
+    where
+        is_del = 0
+        <if test="name != null and name != ''">
+          and `name` like concat("%",#{name},"%")
+        </if>
+  </select>
+</mapper>

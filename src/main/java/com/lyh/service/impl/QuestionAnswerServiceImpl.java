@@ -173,10 +173,22 @@ public class QuestionAnswerServiceImpl implements QuestionAnswerService {
 
     @Override
     public PageInfo<QuestionAnswerVo> findQuestionAnswerListInback(String username, String username1, String title, String startTime, String endTime, Integer pageIndex, Integer pageSize) {
+        if (startTime != null && endTime != null) {
+            startTime = startTime + " 00:00:00";
+            endTime = endTime + " 23:59:59";
+        }
         Page<QuestionAnswerVo> page = PageHelper.startPage(pageIndex, pageSize);
         List<QuestionAnswerVo> list = questionAnswerMapper.selectQuestionAnswerListInBack(username,username1,title,startTime,endTime);
         PageInfo<QuestionAnswerVo> pageInfo = page.toPageInfo();
         pageInfo.setList(list);
         return pageInfo;
+    }
+
+    @Override
+    public void delQuestionAnswer(Long qaId) {
+        QuestionAnswer questionAnswer = new QuestionAnswer();
+        questionAnswer.setId(qaId);
+        questionAnswer.setIsDel(DelEnum.IS_DEL.getValue());
+        questionAnswerMapper.updateByPrimaryKeySelective(questionAnswer);
     }
 }

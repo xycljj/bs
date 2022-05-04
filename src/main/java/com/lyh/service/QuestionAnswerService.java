@@ -31,4 +31,6 @@ public interface QuestionAnswerService {
     Integer countQaByUserId(Long userId);
 
     PageInfo<QuestionAnswerVo> findQuestionAnswerListInback(String username, String username1, String title, String startTime, String endTime, Integer pageIndex, Integer pageSize);
+
+    void delQuestionAnswer(Long qaId);
 }
