@@ -27,8 +27,8 @@ public class UploadUtils {
     private static final String ACCESS_KEY = "o3uMSp3wp56Q817dOKaoX6amznh0-e4EzaISlioh"; //这两个登录七牛
     private static final String SECRET_KEY = "fZz2aq0dct24p9uGhNzBSDja6_0SVr8CMwpwCJxO";
     //要上传的空间
-    private static final String bucketName = "bsimgs"; //对应要上传到七牛上
-    private static final String domain = "r9usrxrds.bkt.clouddn.com"; //对应要上传到七牛上
+    private static final String bucketName = "bsimgs2"; //对应要上传到七牛上
+    private static final String domain = "rbfvta36h.hd-bkt.clouddn.com"; //对应要上传到七牛上
     //密钥配置
     private static Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
     private static Configuration cfg = new Configuration(Region.huadong());
@@ -73,7 +73,7 @@ public class UploadUtils {
         } catch (QiniuException e) {
             e.printStackTrace();
         }
-        return "http://r9wh5l95k.hd-bkt.clouddn.com/"+ resKey;
+        return "http://rbfvta36h.hd-bkt.clouddn.com/"+ resKey;
     }
 
     public static List<String> uploadConsultantQualification(MultipartFile[] files) throws IOException {

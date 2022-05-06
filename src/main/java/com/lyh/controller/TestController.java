@@ -1,9 +1,12 @@
 package com.lyh.controller;
 
 import com.lyh.entity.Test;
+import com.lyh.entity.TestScoreRule;
 import com.lyh.entity.vo.PaperDetail;
+import com.lyh.entity.vo.TestScoreRulesVo;
 import com.lyh.entity.vo.TestSubjectVo;
 import com.lyh.entity.vo.TestVo;
+import com.lyh.service.TestScoreRuleService;
 import com.lyh.service.TestService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
@@ -26,6 +29,9 @@ public class TestController {
 
     @Resource
     private TestService testService;
+
+    @Resource
+    private TestScoreRuleService testScoreRuleService;
 
     /**
     * @return
@@ -97,7 +103,9 @@ public class TestController {
         PaperDetail paperDetail = new PaperDetail();
         paperDetail.setTextList(testSubjects);
         Test test = testService.findTestById(id);
+        List<TestScoreRulesVo> resultList = testScoreRuleService.findListByIds(test.getRulesId());
         paperDetail.setPaperName(test.getName());
+        paperDetail.setResultList(resultList);
         return ResultUtil.ok(paperDetail);
     }
 }

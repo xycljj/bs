@@ -1,5 +1,6 @@
 package com.lyh.entity.vo;
 
+import com.lyh.entity.TestScoreRule;
 import lombok.Data;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
 public class PaperDetail {
 
     private List<TestSubjectVo> textList;
+
+    private List<TestScoreRulesVo> resultList;
 
     private String paperName;
 }

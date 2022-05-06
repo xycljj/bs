@@ -18,6 +18,8 @@ public class TestVo {
 
     private List<TestSubjectVo> testSubjects;
 
+    private List<TestScoreRulesVo> resultList;
+
     private Date date;
 
     private String cover;

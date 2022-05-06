@@ -21,4 +21,6 @@ public class TestSubjectVo {
     private List<Integer> scoreList;
 
     private Long id;
+
+    private Long score;
 }

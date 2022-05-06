@@ -1,9 +1,12 @@
 package com.lyh.service.impl;
 
 import com.lyh.dao.TestMapper;
+import com.lyh.dao.TestScoreRuleMapper;
 import com.lyh.dao.TestSubjectMapper;
 import com.lyh.entity.Test;
+import com.lyh.entity.TestScoreRule;
 import com.lyh.entity.TestSubject;
+import com.lyh.entity.vo.TestScoreRulesVo;
 import com.lyh.entity.vo.TestSubjectVo;
 import com.lyh.entity.vo.TestVo;
 import com.lyh.enums.DelEnum;
@@ -29,6 +32,10 @@ public class TestServiceImpl implements TestService {
     @Resource
     private TestSubjectMapper testSubjectMapper;
 
+    @Resource
+    private TestScoreRuleMapper testScoreRuleMapper;
+
+
     @Override
     public void addTest(TestVo testVo) {
         List<TestSubjectVo> testSubjects = testVo.getTestSubjects();
@@ -39,9 +46,9 @@ public class TestServiceImpl implements TestService {
             // 区分题目答案
             StringBuffer sb = new StringBuffer();
             StringBuffer scores = new StringBuffer();
-            testSubjectVo.getTextList().stream().forEach((item) -> sb.append(item + ","));
+            testSubjectVo.getTextList().stream().forEach((item) -> sb.append(item + "|"));
             testSubjectVo.getScoreList().stream().forEach((score) -> scores.append(score+","));
-            if (sb.toString().endsWith(",")) {
+            if (sb.toString().endsWith("|")) {
                 sb.delete(sb.length() - 1, sb.length());
             }
             if(scores.toString().endsWith(",")) {
@@ -60,12 +67,33 @@ public class TestServiceImpl implements TestService {
         if (itemId.toString().endsWith(",")) {
             itemId.delete(itemId.length() - 1, itemId.length());
         }
+        //打分规则
+        StringBuilder scoreIds = new StringBuilder();
+        List<TestScoreRulesVo> resultList = testVo.getResultList();
+        for(TestScoreRulesVo testScoreRulesVo: resultList){
+            StringBuffer scoreStr = new StringBuffer();
+            testScoreRulesVo.getScoreSegment().stream().forEach((item) -> scoreStr.append(item+","));
+            TestScoreRule testScoreRule = new TestScoreRule();
+            testScoreRule.setResult(testScoreRulesVo.getResult());
+            if(scoreStr.toString().endsWith(",")){
+                scoreStr.delete(scoreStr.length()-1,scoreStr.length());
+            }
+            testScoreRule.setSegment(scoreStr.toString());
+            testScoreRuleMapper.insert(testScoreRule);
+            Long id = testScoreRuleMapper.selectLatestScoreRulesId();
+            scoreIds.append(id+',');
+        }
+        if(scoreIds.toString().endsWith(",")){
+            scoreIds.delete(scoreIds.length()-1,scoreIds.length());
+        }
+
         Test test = new Test();
         test.setDate(testVo.getDate());
         test.setIsDel(DelEnum.IS_NOT_DEL.getValue());
         test.setItemIds(itemId.toString());
         test.setName(testVo.getName());
         test.setCover(testVo.getCover());
+        test.setRulesId(scoreIds.toString());
         testMapper.insert(test);
     }
 
@@ -87,7 +115,7 @@ public class TestServiceImpl implements TestService {
             testSubjectVo.setTitle(testSubject.getTitle());
             testSubjectVo.setType(testSubject.getType());
             testSubjectVo.setId(testSubject.getId());
-            String[] split1 = testSubject.getAnswer().split(",");
+            String[] split1 = testSubject.getAnswer().split("\\|");
             String[] split2 = testSubject.getScore().split(",");
             List<String> textList = new ArrayList<>();
             List<Integer> scoreList = new ArrayList<>();

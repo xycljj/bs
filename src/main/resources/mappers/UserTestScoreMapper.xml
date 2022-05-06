@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyh.dao.UserTestScoreMapper">
+  <resultMap id="BaseResultMap" type="com.lyh.entity.UserTestScore">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="test_id" jdbcType="BIGINT" property="testId" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, test_id, score
+  </sql>
+  <select id="selectByUserIdOrTestId" resultType="com.lyh.entity.vo.UserTestScoreVo">
+    select
+        uts.id as id,
+        uts.user_id as userId,
+        uts.testId as testId,
+        uts.score as score,
+        u.username as username,
+        t.title as testTitle,
+        t.cover as testCover
+    from
+        user_test_score uts left join `user` u on uts.user_id = u.id
+        left join test t on uts.test_id = t.id
+    where
+        t.is_del = 0 and u.is_del = 0
+        <if test="userId != null and userId != ''">
+          and uts.user_id = #{userId}
+        </if>
+        <if test="testId != null and testId != ''">
+          and uts.testId = #{testId}
+        </if>
+        order by uts.id desc
+  </select>
+</mapper>

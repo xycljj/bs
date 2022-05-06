@@ -43,6 +43,11 @@ public class Test implements Serializable {
      */
     private String cover;
 
+    /**
+     * 打分规则
+     */
+    private String rulesId;
+
     private static final long serialVersionUID = 1L;
 
 
