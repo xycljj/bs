@@ -72,4 +72,23 @@ public class SessionListServiceImpl implements SessionListService {
         }
         return count;
     }
+
+    @Override
+    public boolean selectListIsExist(Long id, Long toUserId) {
+        Example example = new Example(SessionList.class);
+        example.createCriteria().andEqualTo("userId",id).andEqualTo("toUserId",toUserId);
+        List<SessionList> sessionLists = sessionListMapper.selectByExample(example);
+        return sessionLists.size() > 0;
+    }
+
+    @Override
+    public Long selectSessionIdByUserIdAndToUserId(Long id, Long toUserId) {
+        Example example = new Example(SessionList.class);
+        example.createCriteria().andEqualTo("userId",id).andEqualTo("toUserId",toUserId);
+        SessionList sessionList = sessionListMapper.selectOneByExample(example);
+        if(sessionList == null){
+            return null;
+        }
+        return sessionList.getId();
+    }
 }

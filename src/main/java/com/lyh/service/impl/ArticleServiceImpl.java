@@ -1,6 +1,8 @@
 package com.lyh.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.lyh.dao.ArticleMapper;
 import com.lyh.dao.ArticleTypeMapper;
 import com.lyh.dao.UserMapper;
@@ -8,14 +10,17 @@ import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
 import com.lyh.entity.User;
 import com.lyh.entity.vo.ArticleVo;
+import com.lyh.entity.vo.ArticleVo1;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.ArticleService;
 import com.lyh.utils.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -132,23 +137,22 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleVo> getArticleByTypeId(Long id) {
-        List<Article> articleList = articleMapper.selectAll();
-        List<ArticleVo> useArticleList = new ArrayList<>();
-        for (Article article : articleList) {
-            String[] split = article.getArticleTypeId().split(",");
-            for (String _id : split) {
-                if (String.valueOf(id).equals(_id)) {
-                    ArticleVo articleVo = new ArticleVo();
-                    User user = userMapper.selectByPrimaryKey(article.getUserId());
-                    articleVo.setArticle(article);
-                    articleVo.setUsername(user.getUsername());
-                    useArticleList.add(articleVo);
-                    break;
-                }
+    public PageInfo<ArticleVo1> getArticleByTypeId(Long id, Integer pageIndex, Integer pageSize) {
+        Page<ArticleVo1> page = PageHelper.startPage(pageIndex, pageSize);
+        List<ArticleVo1> list = articleMapper.selectListByTypeId(id);
+        for (ArticleVo1 articleVo1 : list) {
+            articleVo1.setUsername(userMapper.selectByPrimaryKey(articleVo1.getUserId()).getUsername());
+            articleVo1.setType(articleTypeMapper.selectByIds(articleVo1.getArticleTypeId()));
+            Object o = redisUtil.get("post:read:count" + articleVo1.getId());
+            if(o == null){
+                articleVo1.setReadCount(0l);
+            }else{
+                articleVo1.setReadCount(Long.parseLong(String.valueOf(o)));
             }
         }
-        return useArticleList;
+        PageInfo<ArticleVo1> articleVo1PageInfo = page.toPageInfo();
+        articleVo1PageInfo.setList(list);
+        return articleVo1PageInfo;
     }
 
     @Override
@@ -213,5 +217,14 @@ public class ArticleServiceImpl implements ArticleService {
         article.setIsDel(DelEnum.IS_DEL.getValue());
         return articleMapper.updateByPrimaryKeySelective(article) == 1;
     }
+
+    @Override
+    public List<ArticleType> getArticleTypeListAll() {
+        Example example = new Example(ArticleType.class);
+        example.createCriteria().andEqualTo("isDel", DelEnum.IS_NOT_DEL.getValue());
+        List<ArticleType> articleTypes = articleTypeMapper.selectByExample(example);
+        return articleTypes;
+    }
+
 
 }

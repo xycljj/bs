@@ -19,7 +19,7 @@ public interface ApplicationService {
     * @Param
     * @Date 2022/4/30
     **/
-    void addApplication(String toString, Long userId);
+    void addApplication(String toString, Long userId, String skill);
 
     PageInfo<ApplicationVo> findAuditList(String username, String startTime, String endTime, Integer pageIndex, Integer pageSize);
 

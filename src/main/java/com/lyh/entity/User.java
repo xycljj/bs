@@ -84,10 +84,7 @@ public class User implements Serializable {
      */
     private Integer isConsultant;
 
-    /**
-     * 咨询师证明 文件地址
-     */
-    private String consultantUrl;
+    private String skillField;
 
     private static final long serialVersionUID = 1L;
 }

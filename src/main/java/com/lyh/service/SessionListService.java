@@ -26,4 +26,8 @@ public interface SessionListService {
     void delUnReadCount(Long fromUserId, Long toUserId);
 
     Integer findUnReadMsgCountByUserId(Long userId);
+
+    boolean selectListIsExist(Long id, Long toUserId);
+
+    Long selectSessionIdByUserIdAndToUserId(Long id, Long toUserId);
 }

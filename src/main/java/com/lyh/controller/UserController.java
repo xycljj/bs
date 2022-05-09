@@ -1,25 +1,26 @@
 package com.lyh.controller;
 
+import com.fasterxml.jackson.databind.deser.impl.BeanPropertyMap;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.StringUtil;
-import com.lyh.dao.SessionListMapper;
 import com.lyh.entity.Admin;
-import com.lyh.entity.Application;
 import com.lyh.entity.User;
 import com.lyh.entity.UserFocus;
 import com.lyh.entity.vo.ArticleVo;
+import com.lyh.entity.vo.UserInfo;
 import com.lyh.entity.vo.UserVo;
 import com.lyh.service.*;
 import com.lyh.utils.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,9 @@ public class UserController {
     @Resource
     private ApplicationService applicationService;
 
+    @Resource
+    private SkillFieldService skillFieldService;
+
     /**
      * @return
      * @Author lyh
@@ -103,7 +107,7 @@ public class UserController {
         if (userService.addUser(user) == 1) {
             return ResultUtil.ok(user);
         }
-        return ResultUtil.fail("注册失败");
+        return ResultUtil.fail("用户名已存在");
     }
 
     /**
@@ -163,9 +167,15 @@ public class UserController {
      * @Date 2021/12/16
      **/
     @GetMapping("findUserById")
-    public Result<User> findUserById(Long id) {
+    public Result<UserInfo> findUserById(Long id) {
         User user = userService.findUserById(id);
-        return ResultUtil.ok(user);
+        UserInfo userInfo = new UserInfo();
+        BeanUtils.copyProperties(user,userInfo);
+        if(!StringUtils.isEmpty(user.getSkillField())){
+            List<String> skills = skillFieldService.getListString(user.getSkillField());
+            userInfo.setSkills(skills);
+        }
+        return ResultUtil.ok(userInfo);
     }
 
     /**
@@ -356,7 +366,8 @@ public class UserController {
      * @Date 2022/4/30
      **/
     @PostMapping("toBeConsultant")
-    public Result<Boolean> uploadQualification(@RequestParam("file") MultipartFile[] files, @RequestParam("userId") Long userId) {
+    public Result<Boolean> uploadQualification(@RequestParam("file") MultipartFile[] files, @RequestParam("userId") Long userId,
+                                               @RequestParam("skillField") List<Long> skillField) {
         try {
             List<String> urlList = UploadUtils.uploadConsultantQualification(files);
             if (urlList.size() > 0) {
@@ -369,7 +380,14 @@ public class UserController {
                 if (sb.toString().endsWith(",")) {
                     sb = sb.delete(sb.length() - 1, sb.length());
                 }
-                applicationService.addApplication(sb.toString(), userId);
+                StringBuilder sb1 = new StringBuilder();
+                for(Long _id : skillField){
+                    sb1.append(_id+",");
+                }
+                if(sb1.toString().endsWith(",")){
+                    sb1.delete(sb1.length()-1,sb1.length());
+                }
+                applicationService.addApplication(sb.toString(), userId,sb1.toString());
             }
         } catch (IOException e) {
             e.printStackTrace();

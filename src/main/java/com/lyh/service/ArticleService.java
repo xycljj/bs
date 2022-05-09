@@ -1,8 +1,10 @@
 package com.lyh.service;
 
+import com.github.pagehelper.PageInfo;
 import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
 import com.lyh.entity.vo.ArticleVo;
+import com.lyh.entity.vo.ArticleVo1;
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ public interface ArticleService {
 
     Long getNewArticleId(String name);
 
-    List<ArticleVo> getArticleByTypeId(Long id);
+    PageInfo<ArticleVo1> getArticleByTypeId(Long id, Integer pageIndex, Integer pageSize);
 
     Integer countAuthorsArticles(Long id);
 
@@ -44,5 +46,8 @@ public interface ArticleService {
     Long findAuthorByArticleId(Long articleId);
 
     boolean delArticleById(Long articleId);
+
+    List<ArticleType> getArticleTypeListAll();
+
 
 }

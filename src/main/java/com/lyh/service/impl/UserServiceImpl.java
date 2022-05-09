@@ -44,9 +44,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int addUser(User user) {
-        user.setIsDel(DelEnum.IS_NOT_DEL.getValue());
-        user.setCreateTime(new Date());
-        return userMapper.insertSelective(user);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("username",user.getUsername());
+        List<User> users = userMapper.selectByExample(example);
+        if(users.size() == 0){
+            user.setIsDel(DelEnum.IS_NOT_DEL.getValue());
+            user.setCreateTime(new Date());
+            return userMapper.insertSelective(user);
+        }
+        return 0;
     }
 
     @Override

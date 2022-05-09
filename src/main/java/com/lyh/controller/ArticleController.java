@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyh.entity.*;
 import com.lyh.entity.vo.ArticleVo;
+import com.lyh.entity.vo.ArticleVo1;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.AdministratorOperationInformationService;
 import com.lyh.service.ArticleService;
@@ -96,6 +97,19 @@ public class ArticleController {
         PageInfo<ArticleType> pageInfo = page.toPageInfo();
         pageInfo.setList(articleTypeList);
         return ResultUtil.ok(pageInfo);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 获取所有
+    * @Param
+    * @Date 2022/5/7
+    **/
+    @GetMapping("getTypeListAll")
+    public Result<?> getArticleTypeListAll() {
+        List<ArticleType> list = articleService.getArticleTypeListAll();
+        return ResultUtil.ok(list);
     }
 
     /**
@@ -239,10 +253,9 @@ public class ArticleController {
     * @Date 2022/4/13
     **/
     @GetMapping("getArticleByTypeId")
-    public Result<List<ArticleVo>> getArticleByTypeId(Long id, @RequestParam(defaultValue = "1") Integer pageIndex,
-                                                     @RequestParam(defaultValue = "6") Integer pageSize){
-//        PageHelper.startPage(pageIndex,pageSize);
-        List<ArticleVo> list = articleService.getArticleByTypeId(id);
+    public Result<PageInfo<ArticleVo1>> getArticleByTypeId(Long id, @RequestParam(defaultValue = "1") Integer pageIndex,
+                                                           @RequestParam(defaultValue = "10") Integer pageSize){
+        PageInfo<ArticleVo1> list = articleService.getArticleByTypeId(id,pageIndex,pageSize);
         return ResultUtil.ok(list);
     }
 

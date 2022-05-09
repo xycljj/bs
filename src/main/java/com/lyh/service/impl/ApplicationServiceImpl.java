@@ -5,8 +5,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyh.dao.ApplicationFileMapper;
 import com.lyh.dao.ApplicationMapper;
+import com.lyh.dao.UserMapper;
 import com.lyh.entity.Application;
 import com.lyh.entity.ApplicationFile;
+import com.lyh.entity.User;
 import com.lyh.entity.vo.ApplicationVo;
 import com.lyh.service.ApplicationService;
 import org.springframework.stereotype.Service;
@@ -31,12 +33,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Resource
     private ApplicationFileMapper applicationFileMapper;
 
+    @Resource
+    private UserMapper userMapper;
+
     @Override
-    public void addApplication(String toString, Long userId) {
+    public void addApplication(String toString, Long userId, String skill) {
         Application application = new Application();
         application.setIsPass(0);
         application.setUrlIds(toString);
         application.setUserId(userId);
+        application.setSkillField(skill);
         application.setCreateTime(new Date());
         applicationMapper.insert(application);
     }
@@ -89,6 +95,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setId(applicationId);
         application.setIsPass(num);
         applicationMapper.updateByPrimaryKeySelective(application);
+        Application application1 = applicationMapper.selectByPrimaryKey(applicationId);
+        if(num == 1){
+            User user = new User();
+            user.setId(application1.getUserId());
+            user.setSkillField(application1.getSkillField());
+            user.setIsConsultant(1);
+            userMapper.updateByPrimaryKeySelective(user);
+        }
     }
 
     @Override

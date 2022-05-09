@@ -9,5 +9,8 @@
   <sql id="Base_Column_List">
     id, `name`, create_time
   </sql>
+  <select id="selectAllWhileIsNotDel" resultType="com.lyh.entity.Article">
+    select
 
+  </select>
 </mapper>

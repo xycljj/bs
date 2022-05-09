@@ -68,12 +68,19 @@ public class SessionController {
      **/
     @GetMapping("createSession")
     public Result<?> createSession(@RequestParam Long id, @RequestParam Long toUserId, @RequestParam String toUserName) {
+        // 先判断会话是否已经存在
+        boolean isExist = sessionListService.selectListIsExist(id,toUserId);
+        if(isExist){
+            Long sessionId = sessionListService.selectSessionIdByUserIdAndToUserId(id,toUserId);
+            return ResultUtil.ok("会话已经存在",sessionId);
+        }
         SessionList sessionList = new SessionList();
         sessionList.setUserId(id);
         sessionList.setUnReadCount(0);
         sessionList.setListName(toUserName);
         sessionList.setToUserId(toUserId);
         sessionListService.createSession(sessionList);
+        Long sessionId = sessionListService.selectSessionIdByUserIdAndToUserId(id,toUserId);
         // 判断对方和我建立会话没有？ 没有也要建立
         Long aLong = sessionListService.selectIdByUser(toUserId, id);
         if (aLong == null || aLong <= 0) {
@@ -83,7 +90,7 @@ public class SessionController {
             sessionList.setListName(user.getUsername());
             sessionListService.createSession(sessionList);
         }
-        return ResultUtil.ok();
+        return ResultUtil.ok(sessionId);
     }
 
     // 删除会话

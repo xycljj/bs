@@ -38,6 +38,8 @@ public class Application implements Serializable {
      */
     private Integer isPass;
 
+    private String skillField;
+
     private static final long serialVersionUID = 1L;
 
 }

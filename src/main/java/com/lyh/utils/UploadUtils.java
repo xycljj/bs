@@ -20,7 +20,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 /**
- * Created by Kak on 2020/9/15.
+ * Created by lyh on 2022/3/20.
  */
 public class UploadUtils {
     //设置好账号的ACCESS_KEY和SECRET_KEY

@@ -32,5 +32,16 @@
     order by
         a.create_time desc
 </select>
+    <select id="selectListByTypeId" resultType="com.lyh.entity.vo.ArticleVo1">
+        select
+            id,title,description,content,create_time,is_del,article_type_id,user_id,cover,article_tags
+        from article
+        where
+            article.is_del = 0
+            <if test="typeId != null and typeId != ''">
+                and FIND_IN_SET(#{typeId},article_type_id)
+            </if>
+        order by create_time desc
+    </select>
 
 </mapper>
