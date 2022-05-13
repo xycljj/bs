@@ -7,6 +7,7 @@ import com.lyh.service.SessionListService;
 import com.lyh.service.UserService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -94,6 +95,7 @@ public class SessionController {
     }
 
     // 删除会话
+    @Transactional
     @GetMapping("delSession")
     public Result<?> delSession(@RequestParam Long sessionId) {
         sessionListService.delSession(sessionId);

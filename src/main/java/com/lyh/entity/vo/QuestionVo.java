@@ -49,6 +49,8 @@ public class QuestionVo {
      */
     private String questionerAvatar;
 
+    private String questionerUsername;
+
     /**
      * 是否给了抱抱
      */

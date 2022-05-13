@@ -27,4 +27,8 @@ public interface QuestionService {
     void addReadCount(Long id);
 
     Integer collectionCountByUserId(Long userId);
+
+    List<QuestionVo> collectionQuestion(Long userId);
+
+    List<QuestionVo> myQuestion(Long userId);
 }

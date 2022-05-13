@@ -6,6 +6,7 @@ import com.lyh.entity.vo.TagVo;
 import com.lyh.service.TagService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -32,6 +33,7 @@ public class TagController {
     * @Param
     * @Date 2022/4/26
     **/
+    @Transactional
     @PostMapping("addTag1")
     public Result<Boolean> addTag1(@RequestBody PTag pTag){
         boolean isExist = tagService.checkTagName1IsExist(pTag.getName());
@@ -49,6 +51,7 @@ public class TagController {
      * @Param
      * @Date 2022/4/26
      **/
+    @Transactional
     @PostMapping("addTag2")
     public Result<Boolean> addTag2(@RequestBody SubTag subTag){
         boolean isExist = tagService.checkTagName2IsExist(subTag.getName());
@@ -66,6 +69,7 @@ public class TagController {
     * @Param
     * @Date 2022/4/26
     **/
+    @Transactional
     @GetMapping("delTag1")
     public Result<Boolean> delTag1(Long id){
         boolean flag = tagService.delTag1(id);
@@ -79,6 +83,7 @@ public class TagController {
      * @Param
      * @Date 2022/4/26
      **/
+    @Transactional
     @GetMapping("delTag2")
     public Result<Boolean> delTag2(Long id){
         boolean flag = tagService.delTag2(id);

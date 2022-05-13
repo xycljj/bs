@@ -19,15 +19,19 @@
 <select id="selectArticleList" resultType="com.lyh.entity.Article">
     select
         a.id, a.title, a.description, a.create_time as createTime, a.is_del as isDel, a.article_type_id as articleTypeId,
-        a.user_id as userId
+        a.user_id as userId, a.cover as cover, a.article_tags as articleTags
     from
         article a left join `user` u on a.user_id = u.id
-    where a.is_del = 0 and u.is_del = 0
+    where
+        a.is_del = 0 and u.is_del = 0
         <if test="username != null">
             and u.username like concat("%",#{username},"%")
         </if>
         <if test="title != null">
             and title like concat("%",#{title},"%")
+        </if>
+        <if test="typeIds != null and typeIds != ''">
+            and FIND_IN_SET(#{typeIds},a.article_type_id)
         </if>
     order by
         a.create_time desc
@@ -43,5 +47,10 @@
             </if>
         order by create_time desc
     </select>
-
+<select id="selectArticleDetailById" resultType="com.lyh.entity.vo.ArticleDetail">
+    select id,title,description,content,create_time,is_del,article_type_id,cover,user_id,article_tags
+    from article
+    where is_del = 0
+    and id = #{id}
+</select>
 </mapper>

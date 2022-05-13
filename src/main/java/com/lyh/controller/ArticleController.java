@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyh.entity.*;
+import com.lyh.entity.vo.ArticleDetail;
 import com.lyh.entity.vo.ArticleVo;
 import com.lyh.entity.vo.ArticleVo1;
 import com.lyh.enums.DelEnum;
@@ -60,7 +61,7 @@ public class ArticleController {
             articleType.setId(newArticleId);
             return ResultUtil.ok(articleType);
         } else {
-            return ResultUtil.fail("添加失败");
+            return ResultUtil.fail("添加失败,该名称已存在");
         }
     }
 
@@ -72,9 +73,9 @@ public class ArticleController {
     * @Date 2022/2/8
     **/
     @GetMapping("delArticleType")
-    public Result<Boolean> delArticleType(Long id,Long adminId){
+    public Result<Boolean> delArticleType(Long id){
         if(articleService.delArticleType(id) == 1){
-            administratorOperationInformationService.addRecord(id,adminId);
+//            administratorOperationInformationService.addRecord(id,adminId);
             return ResultUtil.ok(true);
         }
         return ResultUtil.fail("删除失败");
@@ -168,11 +169,11 @@ public class ArticleController {
     * @Date 2022/4/1
     **/
     @GetMapping("findArticleList")
-    public Result<PageInfo<ArticleVo>> findArticleList(String title, String username,
+    public Result<PageInfo<ArticleVo>> findArticleList(String title, String username, String typeIds,
                                                     @RequestParam(defaultValue = "1") int pageIndex,
                                                     @RequestParam(defaultValue = "10") int pageSize){
         Page<ArticleVo> page = PageHelper.startPage(pageIndex, pageSize);
-        List<ArticleVo> articleList = articleService.findArticleList(title,username);
+        List<ArticleVo> articleList = articleService.findArticleList(title,username,typeIds);
         PageInfo<ArticleVo> pageInfo = page.toPageInfo();
         pageInfo.setList(articleList);
         return ResultUtil.ok(pageInfo);
@@ -240,8 +241,8 @@ public class ArticleController {
     * @Date 2022/4/12
     **/
     @GetMapping("articleById")
-    public Result<Article> getArticleById(Long articleId){
-        Article article = articleService.getArticlesById(articleId);
+    public Result<ArticleDetail> getArticleById(Long articleId){
+        ArticleDetail article = articleService.getArticlesById(articleId);
         return ResultUtil.ok(article);
     }
 

@@ -1,11 +1,17 @@
 package com.lyh.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.lyh.dao.AdminMapper;
 import com.lyh.dao.AdministratorOperationInformationMapper;
+import com.lyh.dao.SkillFieldMapper;
 import com.lyh.dao.UserMapper;
 import com.lyh.entity.Admin;
 import com.lyh.entity.AdministratorOperationInformation;
+import com.lyh.entity.SkillField;
 import com.lyh.entity.User;
+import com.lyh.entity.vo.UserInfo;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.UserService;
 import com.lyh.utils.RedisUtil;
@@ -13,6 +19,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private SkillFieldMapper skillFieldMapper;
 
 
     @Override
@@ -146,4 +156,26 @@ public class UserServiceImpl implements UserService {
         return Integer.parseInt(String .valueOf(o));
     }
 
+    @Override
+    public PageInfo<UserInfo> getConsultantList(String username, Long skillFieldId, Integer pageIndex, Integer pageSize) {
+        Page<UserInfo> page = PageHelper.startPage(pageIndex, pageSize);
+        List<UserInfo> list = userMapper.selectConsultantList(username,skillFieldId);
+        for(UserInfo userInfo: list){
+            List<SkillField> skillFields = skillFieldMapper.selectByIds(userInfo.getSkillField());
+            List<String> strings = new ArrayList<>();
+            for(SkillField skillField1 : skillFields){
+                strings.add(skillField1.getValue());
+            }
+            userInfo.setSkills(strings);
+        }
+        PageInfo<UserInfo> pageInfo = page.toPageInfo();
+        pageInfo.setList(list);
+        return pageInfo;
+    }
+
+    @Override
+    public boolean cancellation(Long userId) {
+        int i = delUser(userId);
+        return i==1;
+    }
 }

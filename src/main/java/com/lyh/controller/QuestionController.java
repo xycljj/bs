@@ -7,6 +7,7 @@ import com.lyh.utils.RedisUtil;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -32,6 +33,7 @@ public class QuestionController {
      * @Param
      * @Date 2022/4/26
      **/
+    @Transactional
     @PostMapping("addQuestion")
     public Result<Boolean> addQuestion(@RequestBody Question question) {
         boolean flag = questionService.addQuestion(question);
@@ -119,6 +121,31 @@ public class QuestionController {
     }
 
 
+    /**
+    * @return
+    * @Author lyh
+    * @Description 我的收藏中的问题
+    * @Param
+    * @Date 2022/5/13
+    **/
+    @GetMapping("collectionQuestion")
+    public Result<?> collectionQuestion(Long userId) {
+        List<QuestionVo> list = questionService.collectionQuestion(userId);
+        return ResultUtil.ok(list);
+    }
+
+    /**
+     * @return
+     * @Author lyh
+     * @Description 我的收藏中的问题
+     * @Param
+     * @Date 2022/5/13
+     **/
+    @GetMapping("myQuestion")
+    public Result<?> myQuestion(Long userId) {
+        List<QuestionVo> list = questionService.myQuestion(userId);
+        return ResultUtil.ok(list);
+    }
 }
 
 

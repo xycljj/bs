@@ -5,10 +5,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lyh.dao.ArticleMapper;
 import com.lyh.dao.ArticleTypeMapper;
+import com.lyh.dao.CommentMapper;
 import com.lyh.dao.UserMapper;
 import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
+import com.lyh.entity.Comment;
 import com.lyh.entity.User;
+import com.lyh.entity.vo.ArticleDetail;
 import com.lyh.entity.vo.ArticleVo;
 import com.lyh.entity.vo.ArticleVo1;
 import com.lyh.enums.DelEnum;
@@ -44,8 +47,16 @@ public class ArticleServiceImpl implements ArticleService {
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private CommentMapper commentMapper;
+
     @Override
     public int addArticleType(ArticleType articleType) {
+        Example example = new Example(ArticleType.class);
+        example.createCriteria().andEqualTo("name", articleType.getName());
+        if(articleTypeMapper.selectByExample(example).size() > 0){
+            return 0;
+        }
         return articleTypeMapper.insert(articleType);
     }
 
@@ -72,12 +83,13 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleVo> findArticleList(String title, String username) {
-        List<Article> articleList = articleMapper.selectArticleList(title, username);
+    public List<ArticleVo> findArticleList(String title, String username, String typeIds) {
+        List<Article> articleList = articleMapper.selectArticleList(title, username, typeIds);
         List<ArticleVo> articleVoList = new ArrayList<>();
         for (Article article : articleList) {
             ArticleVo articleVo = new ArticleVo();
             articleVo.setArticle(article);
+            articleVo.setType(articleTypeMapper.selectByIds(article.getArticleTypeId()));
             articleVo.setUsername(userMapper.selectByPrimaryKey(article.getUserId()).getUsername());
             articleVoList.add(articleVo);
         }
@@ -124,8 +136,19 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Article getArticlesById(Long articleId) {
-        return articleMapper.selectByPrimaryKey(articleId);
+    public ArticleDetail getArticlesById(Long articleId) {
+        ArticleDetail articleDetail = articleMapper.selectArticleDetailById(articleId);
+        articleDetail.setLikeCount(redisUtil.sGetSetSize("post:"+ articleId));
+        Object o = redisUtil.get("post:read:count"+articleId);
+        if(o == null){
+            articleDetail.setReadCount(0);
+        }else {
+            articleDetail.setReadCount(Integer.parseInt(String.valueOf(o)));
+        }
+        Example example = new Example(Comment.class);
+        example.createCriteria().andEqualTo("articleId",articleId);
+        articleDetail.setCommentCount(commentMapper.selectCountByExample(example));
+        return articleDetail;
     }
 
     @Override

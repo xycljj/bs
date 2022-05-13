@@ -5,6 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.lyh.exception.RrException;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
@@ -21,11 +23,11 @@ import java.util.Map;
 @Slf4j
 public class TokenUtils {
     //设置过期时间
-    private static final long EXPIRE_DATE=60*60*1000 * 24;
+    private static final long EXPIRE_DATE=24*60*60*1000;
     //token秘钥
     private static final String TOKEN_SECRET = "hzddzh";
 
-    public static String token (Long userId){
+    public static String token (Long userId,String role){
 
         String token = "";
         try {
@@ -40,11 +42,15 @@ public class TokenUtils {
             //携带userId信息，生成签名
             token = JWT.create()
                     .withHeader(header)
-                    .withClaim("userId",userId).withExpiresAt(date)
+                    .withClaim("userId",userId)
+                    .withClaim("role",role)
+                    .withExpiresAt(date)
                     .sign(algorithm);
-        }catch (Exception e){
-            e.printStackTrace();
-            return  null;
+
+        }catch (ExpiredJwtException ex) {
+            throw new RrException(30002,"token已过期！");
+        } catch (RuntimeException e){
+            new RrException(30000,"token解析异常！");
         }
         return token;
     }
@@ -64,7 +70,21 @@ public class TokenUtils {
             return false;
         }
     }
-    
+    public static String verify2(String token){
+        /**
+         * @desc   验证token，通过返回true
+         * @params [token]需要校验的串
+         **/
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            DecodedJWT jwt = verifier.verify(token);
+            return jwt.toString();
+        }catch (TokenExpiredException e){
+            log.info(e.getMessage());
+            return e.getMessage();
+        }
+    }
     /**
      * @Author lyh
      * @Description //TODO 获取token中的登录者信息
@@ -83,7 +103,7 @@ public class TokenUtils {
     }
     
     public static void main(String[] args) {
-        String token = token(1l);
+        String token = token(1l,"user");
         System.out.println(token);
         boolean b = verify("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTY0MDY2MTI1MCwidXNlcm5hbWUiOiJoemRkIn0.zOru6-JX_cc0SmSKwS5fZUZko1a2WcCKyfriw_TxcGI");
         System.out.println(b);

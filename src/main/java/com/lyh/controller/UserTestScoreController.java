@@ -6,6 +6,7 @@ import com.lyh.entity.vo.UserTestScoreVo;
 import com.lyh.service.UserTestScoreService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,6 +31,7 @@ public class UserTestScoreController {
     * @Param
     * @Date 2022/5/5
     **/
+    @Transactional
     @PostMapping("doTest")
     public Result<?> doTest(@RequestBody UserTestScore userTestScore){
         userTestScoreService.doTest(userTestScore);

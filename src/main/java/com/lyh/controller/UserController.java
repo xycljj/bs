@@ -11,11 +11,13 @@ import com.lyh.entity.UserFocus;
 import com.lyh.entity.vo.ArticleVo;
 import com.lyh.entity.vo.UserInfo;
 import com.lyh.entity.vo.UserVo;
+import com.lyh.exception.RrException;
 import com.lyh.service.*;
 import com.lyh.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,7 +84,7 @@ public class UserController {
         } else {
             if (user1 != null) {
                 UserVo userVo = new UserVo();
-                String token = TokenUtils.token(user1.getId());
+                String token = TokenUtils.token(user1.getId(),"user");
                 userVo.setUser(user1);
                 userVo.setToken(token);
                 redisUtil.sAdd("userLoginList", user1.getId());
@@ -102,6 +104,7 @@ public class UserController {
      * @Param
      * @Date 2021/12/16
      **/
+    @Transactional
     @PostMapping("addUser")
     public Result<User> addUser(@RequestBody User user) {
         if (userService.addUser(user) == 1) {
@@ -134,6 +137,7 @@ public class UserController {
      * @Param
      * @Date 2021/12/17
      **/
+    @Transactional
     @PostMapping("edit")
     public Result<User> editUser(@RequestBody User user, HttpSession session) {
         Admin admin = (Admin) session.getAttribute("admin");
@@ -226,6 +230,7 @@ public class UserController {
      * @Param
      * @Date 2021/12/29
      **/
+    @Transactional
     @PostMapping("logout")
     public Result<String> logout(Long userId) {
         CurPool.curUserPool.remove(userId);
@@ -238,14 +243,32 @@ public class UserController {
     }
 
     /**
+    * @return
+    * @Author lyh
+    * @Description 注销
+    * @Param
+    * @Date 2022/5/13
+    **/
+    @Transactional
+    @PostMapping("cancellation")
+    public Result<?> cancellation(Long userId) {
+        boolean flag = userService.cancellation(userId);
+        if(flag){
+            return ResultUtil.ok("注销成功");
+        }
+        return ResultUtil.fail("注销失败");
+    }
+
+    /**
      * @return
      * @Author lyh
      * @Description 上传图片(头像)
      * @Param
      * @Date 2022/4/5
      **/
+    @Transactional
     @PostMapping("avator")
-    public Result<Boolean> uploadFile(@RequestParam("file") MultipartFile file, Long userId) {
+    public Result<String> uploadFile(@RequestParam("file") MultipartFile file, Long userId) {
         String url = null;
         try {
             url = UploadUtils.uploadFile(file);
@@ -253,7 +276,7 @@ public class UserController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return ResultUtil.ok("上传成功", true);
+        return ResultUtil.ok("上传成功", url);
     }
 
     /**
@@ -276,6 +299,7 @@ public class UserController {
      * @Param
      * @Date 2022/4/14
      **/
+    @Transactional
     @PostMapping("focus")
     public Result<Boolean> focus(@RequestBody UserFocus userFocus) {
         boolean flag = userFocusService.focus(userFocus);
@@ -289,6 +313,7 @@ public class UserController {
      * @Param
      * @Date 2022/4/15
      **/
+    @Transactional
     @PostMapping("cancelFocus")
     public Result<Boolean> cancelFocus(@RequestBody UserFocus userFocus) {
         boolean flag = userFocusService.cancelFocus(userFocus);
@@ -302,6 +327,7 @@ public class UserController {
      * @Param
      * @Date 2022/4/15
      **/
+    @Transactional
     @PostMapping("isFocused")
     public Result<Boolean> isFocused(@RequestBody UserFocus userFocus) {
         boolean flag = userFocusService.isFocused(userFocus);
@@ -365,6 +391,7 @@ public class UserController {
      * @Param
      * @Date 2022/4/30
      **/
+    @Transactional
     @PostMapping("toBeConsultant")
     public Result<Boolean> uploadQualification(@RequestParam("file") MultipartFile[] files, @RequestParam("userId") Long userId,
                                                @RequestParam("skillField") List<Long> skillField) {
@@ -419,6 +446,21 @@ public class UserController {
     public Result<?> getCreditToCount(Long userId) {
         Integer count = userService.getCreditToCount(userId);
         return ResultUtil.ok(count);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 查询心理咨询师
+    * @Param
+    * @Date 2022/5/11
+    **/
+    @GetMapping("getConsultantList")
+    public Result<?> getConsultantList(String username, Long skillFieldId,
+                                       @RequestParam(defaultValue = "1") Integer pageIndex,
+                                       @RequestParam(defaultValue = "10") Integer pageSize) {
+        PageInfo<UserInfo> pageInfo = userService.getConsultantList(username,skillFieldId,pageIndex,pageSize);
+        return ResultUtil.ok(pageInfo);
     }
 
 }

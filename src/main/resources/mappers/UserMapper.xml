@@ -57,4 +57,18 @@
         and uf.user_id = #{userId}
 
   </select>
+
+  <select id="selectConsultantList" resultType="com.lyh.entity.vo.UserInfo">
+    select id,username,email,`name`,address,phone,avatar,gender,is_consultant,skill_field
+    from
+    `user`
+    where is_del = 0
+    and is_consultant = 1
+    <if test="username != null and username != ''">
+      and username like concat("%",#{username},"%")
+    </if>
+    <if test="skill != null and skill != '' ">
+      and FIND_IN_SET(#{skill},skill_field)
+    </if>
+  </select>
 </mapper>

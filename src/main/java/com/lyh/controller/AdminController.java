@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.springframework.lang.UsesSunMisc;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -55,7 +56,7 @@ public class AdminController {
         Admin admin1 = adminService.login(admin);
         if (admin1 != null) {
             AdminVO adminVO = new AdminVO();
-            String token = TokenUtils.token(admin1.getId());
+            String token = TokenUtils.token(admin1.getId(),"admin");
             adminVO.setAdmin(admin1);
             adminVO.setToken(token);
             log.info("------------管理员登录-------------");
@@ -71,6 +72,7 @@ public class AdminController {
      * @return
      * @Date 2021/12/17
      **/
+    @Transactional
     @PostMapping("addAdmin")
     public Result<Boolean> addAdmin(@RequestBody Admin admin){
         if(adminService.addAdmin(admin)==1){
@@ -153,6 +155,7 @@ public class AdminController {
      * @Param
      * @Date 2022/4/5
      **/
+    @Transactional
     @PostMapping("avator")
     public Result<String> uploadFile(@RequestParam("file") MultipartFile file) {
         String url = null;

@@ -20,5 +20,6 @@
         question
     where
         is_del = 0
+    order by create_time desc
   </select>
 </mapper>

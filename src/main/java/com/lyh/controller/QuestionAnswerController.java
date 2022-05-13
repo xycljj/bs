@@ -11,6 +11,7 @@ import com.lyh.service.QaReplyService;
 import com.lyh.service.QuestionAnswerService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,6 +38,7 @@ public class QuestionAnswerController {
      * @Param
      * @Date 2022/4/27
      **/
+    @Transactional
     @PostMapping("addQuestionAnswer")
     public Result<Boolean> addQuestionAnswer(@RequestBody QuestionAnswer questionAnswer) {
         boolean flag = questionAnswerService.addReply(questionAnswer);
@@ -50,6 +52,7 @@ public class QuestionAnswerController {
     * @Param
     * @Date 2022/5/4
     **/
+    @Transactional
     @GetMapping("delQuestionAnswer")
     public Result<?> delQuestionAnswer(Long qaId){
         questionAnswerService.delQuestionAnswer(qaId);
@@ -76,6 +79,7 @@ public class QuestionAnswerController {
      * @Param
      * @Date 2022/4/27
      **/
+    @Transactional
     @GetMapping("useful")
     public Result<Void> userThinkIsUseful(Long qaId, Long userId) {
         questionAnswerService.useful(qaId, userId);
@@ -89,6 +93,7 @@ public class QuestionAnswerController {
      * @Param
      * @Date 2022/4/27
      **/
+    @Transactional
     @GetMapping("cancelUseful")
     public Result<Void> userThinkIsNotUseful(Long qaId, Long userId) {
         questionAnswerService.cancelUseful(qaId, userId);
@@ -102,6 +107,7 @@ public class QuestionAnswerController {
      * @Param
      * @Date 2022/4/28
      **/
+    @Transactional
     @GetMapping("focus")
     public Result<Boolean> focus(Long answerUserId, Long loginUserId) {
         boolean flag = questionAnswerService.focus(answerUserId, loginUserId);
@@ -115,6 +121,7 @@ public class QuestionAnswerController {
      * @Param
      * @Date 2022/4/28
      **/
+    @Transactional
     @GetMapping("unfocus")
     public Result<Boolean> unfocus(Long answerUserId, Long loginUserId) {
         boolean flag = questionAnswerService.unfocus(answerUserId, loginUserId);
@@ -128,6 +135,7 @@ public class QuestionAnswerController {
      * @Param
      * @Date 2022/4/29
      **/
+    @Transactional
     @PostMapping("sendComment")
     public Result<QaReplyVo> sendComment(@RequestBody QaReply qaReply) {
         QaReplyVo qaReplyVo = qaReplyService.sendComment(qaReply);
@@ -169,4 +177,6 @@ public class QuestionAnswerController {
         PageInfo<QuestionAnswerVo> pageInfo =  questionAnswerService.findQuestionAnswerListInback(username,username1,title,startTime,endTime,pageIndex, pageSize);
         return ResultUtil.ok(pageInfo);
     }
+
+
 }

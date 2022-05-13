@@ -3,6 +3,7 @@ package com.lyh.service;
 import com.github.pagehelper.PageInfo;
 import com.lyh.entity.Admin;
 import com.lyh.entity.User;
+import com.lyh.entity.vo.UserInfo;
 
 import java.util.List;
 
@@ -40,4 +41,7 @@ public interface UserService {
 
     Integer getCreditToCount(Long userId);
 
+    PageInfo<UserInfo> getConsultantList(String username, Long skillFieldId, Integer pageIndex, Integer pageSize);
+
+    boolean cancellation(Long userId);
 }

@@ -6,6 +6,7 @@ import com.lyh.entity.vo.*;
 import com.lyh.service.ReportService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,6 +30,7 @@ public class ReportController {
      * @Param
      * @Date 2022/5/2
      **/
+    @Transactional
     @PostMapping("addReport")
     public Result<?> addReport(@RequestBody Report report) {
         reportService.addReport(report);
@@ -129,6 +131,7 @@ public class ReportController {
      * @Param
      * @Date 2022/5/3
      **/
+    @Transactional
     @GetMapping("treatment")
     public Result<?> treatment(Long id) {
         reportService.treatment(id);

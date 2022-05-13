@@ -31,7 +31,7 @@ public class TestScoreRuleServiceImpl implements TestScoreRuleService {
             testScoreRulesVo.setResult(testScoreRule.getResult());
             List<Integer> scoreList = new ArrayList<>();
             Arrays.stream(testScoreRule.getSegment().split(",")).forEach((score) -> scoreList.add(Integer.parseInt(score)));
-            testScoreRulesVo.setScoreSegment(scoreList);
+            testScoreRulesVo.setResultScore(scoreList);
             list.add(testScoreRulesVo);
         }
         return list;

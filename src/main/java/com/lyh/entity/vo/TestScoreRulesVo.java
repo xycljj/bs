@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class TestScoreRulesVo {
 
-    private List<Integer> scoreSegment;
+    private List<Integer> resultScore;
 
     private String result;
 

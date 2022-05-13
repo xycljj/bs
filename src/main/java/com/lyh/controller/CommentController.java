@@ -6,6 +6,7 @@ import com.lyh.service.CommentService;
 import com.lyh.utils.RedisUtil;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -46,6 +47,7 @@ public class CommentController {
      * @Param
      * @Date 2022/4/18
      **/
+    @Transactional
     @PostMapping("addComment")
     public Result<Comment> addComment(@RequestBody Comment comment) {
         Comment comment1 = commentService.addComment(comment);
@@ -65,6 +67,7 @@ public class CommentController {
      * @Param
      * @Date 2022/4/18
      **/
+    @Transactional
     @GetMapping("like")
     public Result<Boolean> like(Long userId, Long articleId, Long commentId) {
         redisUtil.sAdd("post:" + articleId + ":comment:" + commentId + ":likeListId", userId);
@@ -80,6 +83,7 @@ public class CommentController {
      * @Param
      * @Date 2022/4/18
      **/
+    @Transactional
     @GetMapping("dislike")
     public Result<Boolean> dislike(Long userId, Long articleId, Long commentId) {
         redisUtil.srem("post:" + articleId + ":comment:" + commentId + ":likeListId", userId);

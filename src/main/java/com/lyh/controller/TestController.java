@@ -11,6 +11,7 @@ import com.lyh.service.TestService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
 import com.lyh.utils.UploadUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,6 +41,7 @@ public class TestController {
     * @Param
     * @Date 2022/5/4
     **/
+    @Transactional
     @PostMapping("addTest")
     public Result<?> addTest(@RequestBody TestVo testVo){
         testService.addTest(testVo);
@@ -53,6 +55,7 @@ public class TestController {
     * @Param
     * @Date 2022/5/4
     **/
+    @Transactional
     @GetMapping("delTestPaper")
     public Result<?> delTestPaper(Long testId){
         testService.delTestPaper(testId);
@@ -79,6 +82,7 @@ public class TestController {
     * @Param
     * @Date 2022/5/4
     **/
+    @Transactional
     @PostMapping("uploadCover")
     public Result<String> uploadCover(@RequestParam("file") MultipartFile file) {
         String url = null;

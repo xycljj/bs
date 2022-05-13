@@ -3,6 +3,7 @@ package com.lyh.service;
 import com.github.pagehelper.PageInfo;
 import com.lyh.entity.Article;
 import com.lyh.entity.ArticleType;
+import com.lyh.entity.vo.ArticleDetail;
 import com.lyh.entity.vo.ArticleVo;
 import com.lyh.entity.vo.ArticleVo1;
 
@@ -23,13 +24,13 @@ public interface ArticleService {
 
     boolean addArticle(Article article);
 
-    List<ArticleVo> findArticleList(String title, String username);
+    List<ArticleVo> findArticleList(String title, String username, String typeIds);
 
     void changeArticleCover(Long articleId, String url);
 
     List<ArticleVo> getArticlesByUserId(Long userId);
 
-    Article getArticlesById(Long articleId);
+    ArticleDetail getArticlesById(Long articleId);
 
     Long getNewArticleId(String name);
 

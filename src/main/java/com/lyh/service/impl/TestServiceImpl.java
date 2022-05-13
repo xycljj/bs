@@ -72,7 +72,7 @@ public class TestServiceImpl implements TestService {
         List<TestScoreRulesVo> resultList = testVo.getResultList();
         for(TestScoreRulesVo testScoreRulesVo: resultList){
             StringBuffer scoreStr = new StringBuffer();
-            testScoreRulesVo.getScoreSegment().stream().forEach((item) -> scoreStr.append(item+","));
+            testScoreRulesVo.getResultScore().stream().forEach((item) -> scoreStr.append(item+","));
             TestScoreRule testScoreRule = new TestScoreRule();
             testScoreRule.setResult(testScoreRulesVo.getResult());
             if(scoreStr.toString().endsWith(",")){
@@ -81,7 +81,7 @@ public class TestServiceImpl implements TestService {
             testScoreRule.setSegment(scoreStr.toString());
             testScoreRuleMapper.insert(testScoreRule);
             Long id = testScoreRuleMapper.selectLatestScoreRulesId();
-            scoreIds.append(id+',');
+            scoreIds.append(id+",");
         }
         if(scoreIds.toString().endsWith(",")){
             scoreIds.delete(scoreIds.length()-1,scoreIds.length());

@@ -7,6 +7,7 @@ import com.lyh.entity.vo.ApplicationVo;
 import com.lyh.service.ApplicationService;
 import com.lyh.utils.Result;
 import com.lyh.utils.ResultUtil;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,6 +65,7 @@ public class ApplicationController {
      * @Param
      * @Date 2022/4/30
      **/
+    @Transactional
     @GetMapping("changeStatus")
     public Result<?> updateStatus(Long applicationId, Integer num) {
         applicationService.updateStatus(applicationId, num);

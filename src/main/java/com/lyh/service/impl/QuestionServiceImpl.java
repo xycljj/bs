@@ -8,12 +8,14 @@ import com.lyh.dao.UserMapper;
 import com.lyh.entity.Question;
 import com.lyh.entity.QuestionAnswer;
 import com.lyh.entity.SubTag;
+import com.lyh.entity.User;
 import com.lyh.entity.vo.QaVo;
 import com.lyh.entity.vo.QuestionVo;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.QuestionService;
 import com.lyh.utils.RedisUtil;
 import com.lyh.utils.Result;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -21,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author lyh
@@ -57,6 +60,7 @@ public class QuestionServiceImpl implements QuestionService {
         for (Question question : list) {
             QuestionVo questionVo = new QuestionVo();
             questionVo.setQuestion(question);
+            questionVo.setQuestionerAvatar(userMapper.selectByPrimaryKey(question.getUserId()).getAvatar());
             List<SubTag> subTags = subTagMapper.selectByIds(question.getSubTagIds());
             questionVo.setSubTagList(subTags);
             //...还没结束
@@ -133,12 +137,14 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void collect(Long questionId, Long userId) {
         redisUtil.sAdd("question" + questionId + "collectedList", userId);
+        redisUtil.sAdd("user_collection_question"+userId,questionId);
         redisUtil.incr("user:collection:count"+userId,1);
     }
 
     @Override
     public void cancelCollect(Long questionId, Long userId) {
         redisUtil.srem("question" + questionId + "collectedList", userId);
+        redisUtil.srem("user_collection_question"+userId,questionId);
         redisUtil.decr("user:collection:count"+userId,1);
     }
 
@@ -151,5 +157,66 @@ public class QuestionServiceImpl implements QuestionService {
     public Integer collectionCountByUserId(Long userId) {
 //        redisUtil.sGetSetSize()
         return null;
+    }
+
+    @Override
+    public List<QuestionVo> collectionQuestion(Long userId) {
+        // 取出question_id集合
+        Set<Object> objects = redisUtil.sGet("user_collection_question" + userId);
+        StringBuffer sb = new StringBuffer();
+        objects.stream().forEach((item) -> {
+            sb.append(item+",");
+        });
+        if(sb.toString().endsWith(",")){
+            sb.delete(sb.length()-1,sb.length());
+        }
+        List<QuestionVo> questionVos = new ArrayList<>();
+        if(!StringUtils.isBlank(sb.toString())) {
+            List<Question> questions = questionMapper.selectByIds(sb.toString());
+            for (Question question : questions) {
+                QuestionVo questionVo = new QuestionVo();
+                questionVo.setQuestion(question);
+                if (question.getIsRealName() == 0) {
+                    User user = userMapper.selectByPrimaryKey(question.getUserId());
+                    questionVo.setQuestionerAvatar(user.getAvatar());
+                    questionVo.setQuestionerUsername(user.getUsername());
+                } else {
+                    questionVo.setQuestionerUsername("匿名用户");
+                    questionVo.setQuestionerAvatar(null);
+                }
+                //回答数
+                Example example = new Example(QuestionAnswer.class);
+                example.createCriteria().andEqualTo("questionId", question.getId());
+                int answerCount = questionAnswerMapper.selectCountByExample(example);
+                questionVo.setAnswerCount(answerCount);
+
+                questionVos.add(questionVo);
+            }
+        }
+        return questionVos;
+    }
+
+    @Override
+    public List<QuestionVo> myQuestion(Long userId) {
+        Example example = new Example(Question.class);
+        example.createCriteria().andEqualTo("userId",userId).andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue());
+        List<Question> questions = questionMapper.selectByExample(example);
+        List<QuestionVo> questionVos = new ArrayList<>();
+        for(Question question : questions){
+            QuestionVo questionVo = new QuestionVo();
+            questionVo.setQuestion(question);
+            User user = userMapper.selectByPrimaryKey(question.getUserId());
+            questionVo.setQuestionerAvatar(user.getAvatar());
+            questionVo.setQuestionerUsername(user.getUsername());
+
+            //回答数
+            Example example1 = new Example(QuestionAnswer.class);
+            example1.createCriteria().andEqualTo("questionId", question.getId());
+            int answerCount = questionAnswerMapper.selectCountByExample(example1);
+            questionVo.setAnswerCount(answerCount);
+
+            questionVos.add(questionVo);
+        }
+        return questionVos;
     }
 }
