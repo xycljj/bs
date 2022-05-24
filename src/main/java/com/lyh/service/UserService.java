@@ -3,6 +3,7 @@ package com.lyh.service;
 import com.github.pagehelper.PageInfo;
 import com.lyh.entity.Admin;
 import com.lyh.entity.User;
+import com.lyh.entity.vo.CountVo;
 import com.lyh.entity.vo.UserInfo;
 
 import java.util.List;
@@ -44,4 +45,7 @@ public interface UserService {
     PageInfo<UserInfo> getConsultantList(String username, Long skillFieldId, Integer pageIndex, Integer pageSize);
 
     boolean cancellation(Long userId);
+
+    CountVo findReplyLikeCollectCounts(Long userId);
+
 }

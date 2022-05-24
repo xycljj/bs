@@ -12,9 +12,9 @@ import com.lyh.enums.ResultCodeEnum;
  */
 public class ResultUtil {
 
-    private static final String SUCCESS_MESSAGE = "操作成功";
+    private static final String SUCCESS_MESSAGE = "success";
 
-    private static final String FAIL_MESSAGE = "操作失败";
+    private static final String FAIL_MESSAGE = "fail";
 
     public static <T> Result<T> ok() {
         return ResultUtil.ok(SUCCESS_MESSAGE, null);

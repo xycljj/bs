@@ -9,6 +9,7 @@ import com.lyh.entity.Admin;
 import com.lyh.entity.User;
 import com.lyh.entity.UserFocus;
 import com.lyh.entity.vo.ArticleVo;
+import com.lyh.entity.vo.CountVo;
 import com.lyh.entity.vo.UserInfo;
 import com.lyh.entity.vo.UserVo;
 import com.lyh.exception.RrException;
@@ -461,6 +462,22 @@ public class UserController {
                                        @RequestParam(defaultValue = "10") Integer pageSize) {
         PageInfo<UserInfo> pageInfo = userService.getConsultantList(username,skillFieldId,pageIndex,pageSize);
         return ResultUtil.ok(pageInfo);
+    }
+
+    /**
+    * @return
+    * @Author lyh
+    * @Description 获取4样数据(获赞数/收藏数/回答数)
+    * @Param
+    * @Date 2022/5/24
+    **/
+    @GetMapping("getReplyLikeCollectCounts")
+    public Result<CountVo> getReplyLikeCollectCounts(Long userId){
+        if(userId == null){
+            return ResultUtil.ok("并没有用户id传入",new CountVo().setLikeCount(0).setCollectCount(0).setArticleCount(0).setReplyCount(0));
+        }
+        CountVo countVo = userService.findReplyLikeCollectCounts(userId);
+        return ResultUtil.ok(countVo);
     }
 
 }

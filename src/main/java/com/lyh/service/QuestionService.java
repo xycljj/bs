@@ -1,5 +1,6 @@
 package com.lyh.service;
 
+import com.github.pagehelper.PageInfo;
 import com.lyh.entity.Question;
 import com.lyh.entity.vo.QuestionVo;
 import com.lyh.utils.Result;
@@ -14,7 +15,7 @@ import java.util.List;
 public interface QuestionService {
     boolean addQuestion(Question question);
 
-    List<QuestionVo> findQuestionList(Integer pageIndex, Integer pageSize);
+    PageInfo<QuestionVo> findQuestionList(Integer pageIndex, Integer pageSize);
 
     QuestionVo findQuestionById(Long id, Long userId);
 

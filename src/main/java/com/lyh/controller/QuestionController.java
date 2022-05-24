@@ -1,5 +1,6 @@
 package com.lyh.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.lyh.entity.Question;
 import com.lyh.entity.vo.QuestionVo;
 import com.lyh.service.QuestionService;
@@ -48,10 +49,10 @@ public class QuestionController {
      * @Date 2022/4/26
      **/
     @GetMapping("getQuestionList")
-    public Result<List<QuestionVo>> questionList(@RequestParam(defaultValue = "1") Integer pageIndex,
-                                                 @RequestParam(defaultValue = "6") Integer pageSize) {
+    public Result<PageInfo<QuestionVo>> questionList(@RequestParam(defaultValue = "1") Integer pageIndex,
+                                                     @RequestParam(defaultValue = "6") Integer pageSize) {
 
-        List<QuestionVo> list = questionService.findQuestionList(pageIndex, pageSize);
+        PageInfo<QuestionVo> list = questionService.findQuestionList(pageIndex, pageSize);
         return ResultUtil.ok(list);
     }
 

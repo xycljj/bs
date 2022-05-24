@@ -1,6 +1,8 @@
 package com.lyh.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.lyh.dao.QuestionAnswerMapper;
 import com.lyh.dao.QuestionMapper;
 import com.lyh.dao.SubTagMapper;
@@ -52,10 +54,10 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionVo> findQuestionList(Integer pageIndex, Integer pageSize) {
-        PageHelper.startPage(pageIndex, pageSize);
+    public PageInfo<QuestionVo> findQuestionList(Integer pageIndex, Integer pageSize) {
+        Page<QuestionVo> page = PageHelper.startPage(pageIndex, pageSize);
         List<Question> list = questionMapper.selectQuestionList();
-
+        PageInfo<QuestionVo> questionVoPageInfo = page.toPageInfo();
         List<QuestionVo> questionVos = new ArrayList<>();
         for (Question question : list) {
             QuestionVo questionVo = new QuestionVo();
@@ -94,7 +96,8 @@ public class QuestionServiceImpl implements QuestionService {
             questionVo.setUsefulCount(usefulCount);
             questionVos.add(questionVo);
         }
-        return questionVos;
+        questionVoPageInfo.setList(questionVos);
+        return questionVoPageInfo;
     }
 
     @Override

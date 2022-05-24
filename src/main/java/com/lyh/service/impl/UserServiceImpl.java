@@ -3,18 +3,14 @@ package com.lyh.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lyh.dao.AdminMapper;
-import com.lyh.dao.AdministratorOperationInformationMapper;
-import com.lyh.dao.SkillFieldMapper;
-import com.lyh.dao.UserMapper;
-import com.lyh.entity.Admin;
-import com.lyh.entity.AdministratorOperationInformation;
-import com.lyh.entity.SkillField;
-import com.lyh.entity.User;
+import com.lyh.dao.*;
+import com.lyh.entity.*;
+import com.lyh.entity.vo.CountVo;
 import com.lyh.entity.vo.UserInfo;
 import com.lyh.enums.DelEnum;
 import com.lyh.service.UserService;
 import com.lyh.utils.RedisUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -38,13 +34,16 @@ public class UserServiceImpl implements UserService {
     private AdministratorOperationInformationMapper administratorOperationInformationMapper;
 
     @Resource
-    private AdminMapper adminMapper;
+    private QuestionAnswerMapper questionAnswerMapper;
 
     @Resource
     private RedisUtil redisUtil;
 
     @Resource
     private SkillFieldMapper skillFieldMapper;
+
+    @Autowired
+    private ArticleMapper articleMapper;
 
 
     @Override
@@ -177,5 +176,35 @@ public class UserServiceImpl implements UserService {
     public boolean cancellation(Long userId) {
         int i = delUser(userId);
         return i==1;
+    }
+
+    @Override
+    public CountVo findReplyLikeCollectCounts(Long userId) {
+        CountVo countVo = new CountVo();
+        // 收藏量
+        Object o = redisUtil.get("user:collection:count" + userId);
+        if(null == o){
+           countVo.setCollectCount(0);
+        }else {
+            countVo.setCollectCount(Integer.parseInt(String.valueOf(o)));
+        }
+        // 回答数
+        Example example = new Example(QuestionAnswer.class);
+        example.createCriteria().andEqualTo("fromUserId", userId).andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue());
+        countVo.setReplyCount(questionAnswerMapper.selectCountByExample(example));
+
+        // 获赞数
+        Object o1 = redisUtil.get("getCreditTo" + userId);
+        if(null == o1){
+            countVo.setLikeCount(0);
+        }else{
+            countVo.setLikeCount(Integer.parseInt(String.valueOf(o1)));
+        }
+
+        // 文章数
+        Example example1 = new Example(Article.class);
+        example1.createCriteria().andEqualTo("userId", userId).andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue());
+        countVo.setArticleCount(articleMapper.selectCountByExample(example1));
+        return countVo;
     }
 }
