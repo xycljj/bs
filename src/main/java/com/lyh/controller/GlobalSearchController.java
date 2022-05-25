@@ -3,6 +3,7 @@ package com.lyh.controller;
 import com.lyh.entity.Article;
 import com.lyh.entity.User;
 import com.lyh.entity.vo.ArticleVo;
+import com.lyh.entity.vo.GlobalSearchVo;
 import com.lyh.service.ArticleService;
 import com.lyh.service.UserService;
 import com.lyh.utils.RedisUtil;
@@ -43,7 +44,7 @@ public class GlobalSearchController {
     * @Date 2022/4/24
     **/
     @GetMapping("search")
-    public Result<List<List<Object>>> search(String searchStr){
+    public Result<GlobalSearchVo> search(String searchStr){
         List<List<Object>> res = new ArrayList<>();
         //搜索用户
         List<User> users = userService.findUserBySearchStr(searchStr);
@@ -51,6 +52,6 @@ public class GlobalSearchController {
         List<Article> articles = articleService.findArticleBySearchStr(searchStr);
         res.add(Collections.singletonList(users));
 //        res.add(Collections.singletonList(articles));
-        return ResultUtil.ok(res);
+        return ResultUtil.ok(new GlobalSearchVo().setUserList(users).setArticleList(articles));
     }
 }

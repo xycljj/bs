@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findUserBySearchStr(String searchStr) {
         Example example = new Example(User.class);
-        example.createCriteria().orLike("username",searchStr);
+        example.createCriteria().orLike("username",searchStr).andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue());
         return userMapper.selectByExample(example);
     }
 

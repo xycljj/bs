@@ -194,7 +194,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<Article> findArticleBySearchStr(String searchStr) {
         Example example = new Example(Article.class);
-        example.createCriteria().orLike("title", searchStr).orLike("content", searchStr);
+        example.createCriteria().orLike("title", searchStr).orLike("content", searchStr)
+                .andEqualTo("isDel",DelEnum.IS_NOT_DEL.getValue());
         return articleMapper.selectByExample(example);
     }
 
